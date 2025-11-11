@@ -1,6 +1,7 @@
 package com.pruebastecnicas;
 
 import java.net.Socket;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1126,6 +1127,130 @@ public class App {
         return image;
     }
 
+
+    public static int numIslands(char[][] grid) throws InterruptedException{
+        Stack<HashMap<Integer,Integer>> temporal = new Stack<>();
+        Set<HashMap<Integer,Integer>> visited = new HashSet<>();
+
+        int i=0,j=0,rowSize = grid.length,colSize=grid[0].length,x=0,y=0,counter=0;
+        int[] rowDirs = {-1,0,1,0},colDirs = {0,1,0,-1};
+
+        while(i<rowSize){
+
+            while(j<colSize){
+                if(grid[i][j]!='0'){
+                 //   System.out.println("SIME DETECTA LÑOS UNOS NORMAL "+grid[i][j]);
+                    HashMap<Integer,Integer> coordPivot = new HashMap<>();
+                    coordPivot.put(i, j);
+
+                    if(!visited.contains(coordPivot)){
+                        temporal.add(coordPivot);
+                        visited.add(coordPivot);
+
+                        while(temporal.size()>0){
+                       //     System.out.println("AQUI EMPIEZA ESTO "+temporal.toString()+"<>"+visited.toString());
+                            HashMap<Integer,Integer> stackPop= temporal.pop();
+                            Entry<Integer,Integer> firstCoord = stackPop.entrySet().stream().collect(Collectors.toList()).get(0);
+                            visited.add(stackPop);
+                          //  System.out.println();
+                        //    System.out.println(firstCoord.toString());
+                            for (int k = 0; k < colDirs.length; k++) {
+                                x = firstCoord.getKey()+rowDirs[k];
+                                y = firstCoord.getValue()+colDirs[k];
+
+                                HashMap<Integer,Integer> coord = new HashMap<>();
+                                
+                          //      Thread.sleep(500);
+                                if(x< rowSize && x>=0 && y<colSize && y>=0 && grid[x][y] !='0'){
+                                 //   System.out.println("si lo inserta we ");
+                                    coord.put(x, y);
+                                    if(!visited.contains(coord)){
+                                //        System.out.println("coordenada "+x+"<>"+y);
+                                        temporal.add(coord);
+                                    }
+                                    
+                                }
+                            }
+
+                        }
+
+
+                     //   System.out.println("AQUI TERMINA ESTE PEDO WE "+visited.toString());
+
+                        counter++;
+                    }
+                  
+                }
+
+              //  System.out.println("AQUI RETOMA EL CICLO DE NUEVO");
+                j++;
+            }
+            j=0;
+            i++;
+        }
+
+        return counter;
+    }
+
+    public static int maxAreaOfIsland(int[][] grid) throws InterruptedException{
+        Stack<HashMap<Integer,Integer>> temporal = new Stack<>();
+        Set<HashMap<Integer,Integer>> visited = new HashSet<>();
+
+        int i=0,j=0,rowSize = grid.length,colSize=grid[0].length,x=0,y=0,counter=0,max=0;
+        int[] rowDirs = {-1,0,1,0},colDirs = {0,1,0,-1};
+
+        while(i<rowSize){
+
+            while(j<colSize){
+                if(grid[i][j]!=0){
+                    HashMap<Integer,Integer> coordPivot = new HashMap<>();
+                    coordPivot.put(i, j);
+
+                    if(!visited.contains(coordPivot)){
+                        temporal.add(coordPivot);
+                        visited.add(coordPivot);
+                        //cache.add('a');
+
+                        while(temporal.size()>0){
+                            HashMap<Integer,Integer> stackPop= temporal.pop();
+                            
+                           if(!visited.contains(stackPop)){
+                                counter++;
+                           }
+                            Entry<Integer,Integer> firstCoord = stackPop.entrySet().stream().collect(Collectors.toList()).get(0);
+                            visited.add(stackPop);
+                            for (int k = 0; k < colDirs.length; k++) {
+                                x = firstCoord.getKey()+rowDirs[k];
+                                y = firstCoord.getValue()+colDirs[k];
+
+                                HashMap<Integer,Integer> coord = new HashMap<>();
+                                
+                                if(x< rowSize && x>=0 && y<colSize && y>=0 && grid[x][y] !=0){
+                                    coord.put(x, y);
+                                    
+                                    if(!visited.contains(coord)){
+                                        temporal.add(coord);
+                                    }
+                                    
+                                }
+                            }
+
+                        }
+
+                        max = Math.max(max, (counter+1));
+                        counter = 0;
+                    }
+                  
+                }
+                j++;
+            }
+            j=0;
+            i++;
+        }
+
+        return max;
+    }
+
     public static void main(String[] args) throws InterruptedException {
         System.out.println("Hello World!");
 
@@ -1234,7 +1359,7 @@ public class App {
 
    //     System.out.println(threeSumMulti(test, 8));
 
-        long start = System.nanoTime();
+      /*   long start = System.nanoTime();
         int[][] test = {{1,1,1},{1,2,2},{1,2,2}};
         int [][] outputing = floodFill(test, 1, 1, 3);
         long end = System.nanoTime();
@@ -1246,6 +1371,28 @@ public class App {
             System.out.println();
         }
 
-        System.out.println((double) end-start/1000000);
+        System.out.println((double) end-start/1000000); */
+
+        char[][] islands = {
+        {'1','1','1','1','0'},
+        {'1','1','0','1','0'},
+        {'0','0','0','0','0'},
+        {'0','0','0','0','0'}};
+
+
+
+     //   System.out.println(numIslands(islands));
+
+
+     int[][] islandsC = {{0,0,1,0,0,0,0,1,0,0,0,0,0},
+                        {0,0,0,0,0,0,0,1,1,1,0,0,0},
+                        {0,1,1,0,1,0,0,0,0,0,0,0,0},
+                        {0,1,0,0,1,1,0,0,1,0,1,0,0},
+                        {0,1,0,0,1,1,0,0,1,1,1,0,0},
+                        {0,0,0,0,0,0,0,0,0,0,1,0,0},
+                        {0,0,0,0,0,0,0,1,1,1,0,0,0},
+                        {0,0,0,0,0,0,0,1,1,0,0,0,0}};
+
+    System.out.println(maxAreaOfIsland(islandsC));
     }
 }
