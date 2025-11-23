@@ -1251,8 +1251,263 @@ public class App {
         return max;
     }
 
+    /*public static List<List<Integer>> subsetsWithDup(int[] nums) {
+        Set<List<Integer>> output = new HashSet<>();
+        int i=0,j=1;
+
+        output.add(new ArrayList<>()); // se añade el vacio por regla
+        List<Integer> mainPiv = Arrays.stream(nums).mapToObj(e->Integer.valueOf(e)).collect(Collectors.toCollection(ArrayList::new));
+        Set<Integer> uniqueElements= new HashSet<>(mainPiv); //crea un set con elementos únicos
+        output.add(mainPiv); //añade todo el arreglo como regla
+
+        Iterator<Integer> it = uniqueElements.iterator();
+
+        while(it.hasNext()){
+            Integer pivot = it.next();
+          //  System.out.println(pivot);
+            output.add(new ArrayList<>(Arrays.asList(pivot)));
+          //  output.add(new ArrayList<>(it.next()));
+        }
+
+       // System.out.println(output.toString());
+        
+
+
+        while(j<nums.length ){
+            List<Integer> coords = new ArrayList<>();
+            coords.add(nums[i]);
+            coords.add(nums[j]);
+
+            output.add(coords);
+            i++;
+            j++;
+        }
+
+     //   System.out.println(output.toString());
+
+        List<List<Integer>> finalOutput = output.stream().collect(Collectors.toList());
+        System.out.println(finalOutput.toString());
+
+        
+
+        return finalOutput;
+    } */
+
+    /* public static List<List<Integer>> subsetsWithDup(int[] nums) throws InterruptedException {
+        Set<List<Integer>> output = new LinkedHashSet<>();
+        int i=0,j=0;
+
+        if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por regla
+
+        Queue<Integer> pivot = 
+
+        return new ArrayList<>();
+        
+    } */
+
+    public static List<List<Integer>> permute(int[] nums) throws InterruptedException{
+        Queue<Integer> pivot = new LinkedList<>();
+        Set<List<Integer>> output = new LinkedHashSet();
+
+        Queue<Integer> subQueue = new LinkedList<>();
+        Set<List<Integer>> subCombs = new HashSet<>();
+
+        for (int integer : nums) {
+            pivot.add(integer);
+        }
+
+       
+        List<Integer> checker = pivot.stream().collect(Collectors.toList());
+        List<Integer> subChequer = new ArrayList<>();
+        
+        while(true){
+            
+            output.add(new ArrayList<>(checker));
+            subQueue.addAll(checker.subList(1, checker.size()));
+
+           /*  System.out.println(subQueue.toString()+"---");
+            Thread.sleep(3000); */
+
+            subChequer.addAll(subQueue.stream().collect(Collectors.toList()));
+            int localPiv = checker.get(0); 
+            if(nums.length>2){
+                while(!subCombs.contains(subChequer)){
+                
+                    Queue<Integer> cache = new LinkedList<>();
+                    int rotate = subQueue.poll();
+                    subQueue.add(rotate);
+                    //subQueue.add(new ArrayList<>(subQueue));
+                    subCombs.add(new ArrayList<>(subQueue));
+                    
+
+                    cache.add(localPiv);
+                    cache.addAll(new ArrayList<>(subQueue));
+                    output.add(new ArrayList<>(cache));
+
+                    List<Integer> reversedPiv = new LinkedList<>(subQueue);
+                    Collections.reverse(reversedPiv);
+
+                    subCombs.add(reversedPiv);
+
+                    cache.clear();
+                    cache.add(localPiv);
+                    cache.addAll(reversedPiv);
+                    output.add(new ArrayList<>(cache));
+                }
+            }
+
+            int rev = pivot.poll();
+            pivot.add(rev);
+            checker = pivot.stream().collect(Collectors.toList());
+            if(output.contains(checker)){
+                break;
+            }
+            subChequer.clear();
+            subQueue.clear();
+
+        }
+
+
+        return output.stream().collect(Collectors.toList());
+    }
+
+    /**fibonachi hecho a la improvisada, a pesar de que ya hay un codigo, lo mismo
+     * sucede con esos casos de recursión como
+     */
+    public static int climbStairs(int n) throws InterruptedException {
+        Queue<Integer> steps = new LinkedList();
+        List<List<Integer>> stepFinal = new ArrayList();
+        int result = 0,counter=0,initialPiv=1;
+
+        while(counter<n){
+            System.out.println(result+"<>"+initialPiv);
+          //  result=initialPiv;
+           //if(result>=1){
+                counter++;
+            //}
+            int aux = result;
+            result+=initialPiv;
+            if(result>=3){
+                initialPiv=aux;
+            }
+           // initialPiv++;
+       //    initialPiv=result;
+            
+           
+        }
+        System.out.println(result);
+       // System.out.println(counter);
+      // System.out.println(initialPiv);
+
+        return counter;
+    }
+
+    
+
+    public static int fib(int n) {
+            if(n==0)
+        {
+            return 0;
+        }
+        else if(n==1)
+        {
+            return 1;
+        }
+        else
+        {
+            return fib(n-1)+fib(n-2);
+        }
+    }
+
+    public static boolean canFinish(int numCourses, int[][] prerequisites) {
+        Map<Integer,ArrayList<Integer>> graphStructure = new LinkedHashMap<>();
+        Set<Integer> visited = new HashSet<>();
+        int c=0;
+        boolean result = true;
+        
+        if(prerequisites.length ==0) return true;
+
+        for (int i = 0; i < prerequisites.length; i++) {
+            int keyToInsert = prerequisites[i][0];
+            if(!graphStructure.containsKey(keyToInsert)){
+                ArrayList<Integer> pivot = new ArrayList<>();
+                pivot.add(prerequisites[i][1]);
+                graphStructure.put(keyToInsert, pivot);
+            }else{
+                ArrayList<Integer> pivot = graphStructure.get(keyToInsert);
+                pivot.add(prerequisites[i][1]);
+                graphStructure.put(keyToInsert, pivot);
+            }
+        }
+
+        /**AVAJO */
+        Iterator<Integer> keysIterator = graphStructure.keySet().iterator(); //vas a iteras los subn elementos de tu llave principal para buscarlos dentro del mismo hashmap
+
+
+        System.out.println(graphStructure.toString());
+        while(keysIterator.hasNext()){
+            int keyToSearch = keysIterator.next(); //[[1,0],[0,1]] tienes tu grafo armado
+
+            List<Integer> bfsSearchList = graphStructure.get(keyToSearch); // obtienes el [0] y buscas
+
+            if(bfsSearchList.contains(keyToSearch)){ //compruebas los casos de 5=[5]
+                result = false; // aunque recorras todo el grafo, ya tienes un false aunque de match en el numero de cursos con el set
+            }
+
+            while(c<bfsSearchList.size()){
+                int vertexVisiting = bfsSearchList.get(c);  //1=[0,2,5,8...n] vas iterando el sub arreglo del hashmap
+                if(visited.contains(vertexVisiting)){ // 2 a 1, 1 a 0 y 0 a 2 que es el keyToSearch
+              
+                    /*en este escenario, comprobar si al regresar está el direccionado */
+
+
+                    System.out.println(keyToSearch+","+vertexVisiting+"<<<<"+visited.toString());
+
+                    int recursivePivotKey = vertexVisiting;
+                    while(visited.contains(recursivePivotKey)){ // el visited en esta fase = //[0,1]
+                        Queue<Integer> greedy = new LinkedList<>(graphStructure.get(recursivePivotKey)); 
+
+                    }
+                   
+
+                    result = false;
+                    
+                } //comperuebas los nodos visitados para detectar ciclos
+                
+                List<Integer> adjancList = graphStructure.get(vertexVisiting);
+
+                if(adjancList!=null){
+                    if(adjancList.contains(keyToSearch)){
+                        result = false;
+                    }
+                }else{
+                    visited.add(vertexVisiting);
+                }
+                
+                c++;
+            }
+
+            visited.add(keyToSearch);
+
+         //   System.out.println(visited.toString()+"<>"+result+"<>");
+
+            c=0;
+        }
+
+        return visited.size() <= numCourses && result ? true:false;
+    }
+    
+
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("Hello World!");
+
+        //{{0,10},{3,18},{5,5},{6,11},{11,14},{13,1},{15,1},{17,4}};
+    //    int[][] graphs = {{1,4},{2,4},{3,1},{3,2}};
+
+      int[][] graphs = {{1,0},{2,1},{3,2},{1,3}};
+        System.out.println(canFinish(4, graphs));
+
+      /*   System.out.println("Hello World!");
+        System.out.println("ESCALERA reves "+fib(3)); */
 
         /*
          * int[][] prueba = { {1,2,3,4},{5,6,7,8}qr ,{9,10,11,12}};
@@ -1298,12 +1553,12 @@ public class App {
          * System.out.println(longestConsecutive(prueba));
          */
 
-        String prueba = "ABC";
-        int numRows = 2;
+    //    String prueba = "ABC";
+    //    int numRows = 2;
 
         // System.out.println(convert(prueba, numRows));
 
-        int[] time = { 20, 40 };
+      //  int[] time = { 20, 40 };
         // System.out.println(numPairsDivisibleBy60(time));
 
         // System.out.println((60-(150%60)) %60);
@@ -1316,7 +1571,7 @@ public class App {
          * System.out.println(longestPalindrome(words));
          */
 
-        int[] caseD = { 10, 20, 40, 80 };
+    //    int[] caseD = { 10, 20, 40, 80 };
         // System.out.println(Math.absExact(-3 + 2) + "+");
 
         // System.out.println(canReorderDoubledV2(caseD));
@@ -1327,10 +1582,10 @@ public class App {
          * System.out.println(returnMax(arr));
          */
 
-        int[] testing = { 1, 2, 3, 1 };
+     //   int[] testing = { 1, 2, 3, 1 };
         // System.out.println(Math.abs(0-3)); // es menor o igual a indexDiff que es
         // tres
-        char[][] arr = {{'.','.','4','.','.','.','6','3','.'},
+   /*      char[][] arr = {{'.','.','4','.','.','.','6','3','.'},
                         {'.','.','.','.','.','.','.','.','.'},
                         {'5','.','.','.','.','.','.','9','.'},
                         {'.','.','.','5','6','.','.','.','.'},
@@ -1338,14 +1593,14 @@ public class App {
                         {'.','.','.','7','.','.','.','.','.'},
                         {'.','.','.','5','.','.','.','.','.'},
                         {'.','.','.','.','.','.','.','.','.'},
-                        {'.','.','.','.','.','.','.','.','.'}};
+                        {'.','.','.','.','.','.','.','.','.'}}; */
         // System.out.println(containsNearbyAlmostDuplicate(testing,3,0));
 
       //  System.out.println(arr[0].length + "<>" + arr.length);
 
      //   System.out.println(isValidSudoku(arr));
 
-       String[] strs = {"eat","tea","tan","ate","nat","bat"};
+      // String[] strs = {"eat","tea","tan","ate","nat","bat"};
 
        //System.out.println(groupAnagrams(strs));
 
@@ -1373,26 +1628,35 @@ public class App {
 
         System.out.println((double) end-start/1000000); */
 
-        char[][] islands = {
+ /*        char[][] islands = {
         {'1','1','1','1','0'},
         {'1','1','0','1','0'},
         {'0','0','0','0','0'},
-        {'0','0','0','0','0'}};
+        {'0','0','0','0','0'}}; */
 
 
 
      //   System.out.println(numIslands(islands));
 
 
-     int[][] islandsC = {{0,0,1,0,0,0,0,1,0,0,0,0,0},
+  /*    int[][] islandsC = {{0,0,1,0,0,0,0,1,0,0,0,0,0},
                         {0,0,0,0,0,0,0,1,1,1,0,0,0},
                         {0,1,1,0,1,0,0,0,0,0,0,0,0},
                         {0,1,0,0,1,1,0,0,1,0,1,0,0},
                         {0,1,0,0,1,1,0,0,1,1,1,0,0},
                         {0,0,0,0,0,0,0,0,0,0,1,0,0},
                         {0,0,0,0,0,0,0,1,1,1,0,0,0},
-                        {0,0,0,0,0,0,0,1,1,0,0,0,0}};
+                        {0,0,0,0,0,0,0,1,1,0,0,0,0}}; */
 
-    System.out.println(maxAreaOfIsland(islandsC));
+    //System.out.println(maxAreaOfIsland(islandsC));
+
+    int[] nums = {1,2,2};
+   // System.out.println(subsetsWithDup(nums));
+
+//   System.out.println(permute(new int[]{1,2}));
+
+//System.out.println("ESCALERA "+climbStairs(6));
+
+
     }
 }
