@@ -1541,8 +1541,192 @@ public class App {
     }
     
 
-    public static void main(String[] args) throws InterruptedException {
 
+    public static int numberOfNeighbours(char pivot,char[][] grid,HashMap<Integer,Integer> actualCoordMap,int[] x,int[] y){
+
+        /**Función auxiliar para saber el número de vecinos previo a colocar una coordenada
+         * en la pila de DFS, esto me hace pensar que para easte ´problema capaz
+         * el BFS es más adecuado. Aunque el problema en leetcode da a pie
+         * que se usan ambos.
+         */
+        int numberOfNeighbours = 0;
+
+        Entry<Integer,Integer> actualCoord = actualCoordMap.entrySet().iterator().next();
+        for (int i = 0; i < x.length; i++) {
+            int xCord = actualCoord.getKey()+x[i];
+            int yCord = actualCoord.getValue()+y[i];
+
+            if(xCord>=0 && xCord<grid.length && yCord >=0 && yCord <grid[0].length){
+                if(grid[xCord][yCord] == pivot){
+                    numberOfNeighbours++;
+                }
+            }
+
+        }
+
+        return numberOfNeighbours;
+    }
+    public static boolean containsCycle(char[][] grid) throws InterruptedException{
+        /**PRIMERO IMPLEMENTAR BFS Y DE AHÍ AGARRAR UN DFS */
+
+        Set<HashMap<Integer,Integer>> visitedCoords=new HashSet<>(); //no usarlo en testcases gigantes!!
+        /**ALGO MUY INTERESANTE QUE ACABO DE CHECAR ES QUE, ES MÁS RÁPIDO
+         * EL ALGORITMO PONIENDO LOS VISITED SOBRE UNA MATRIZ DEL MISMO TAMAÑO
+         * QUE SOBRE UN HASHMAP QUE EN TEORIA ES MÁS RAPIDO.
+         * 
+         * lOGICO PUESTO QUE ES DE VELOCIDAD MÁS INSTANTANEA
+         * 
+         * lo cual me hizo perder tiempo de debugging extra sobre algo que ya funcionaba bien
+         * importante profundizar sobre las velocidades en arreglos lineales e instantaneos, obvio
+         * algo indexado explicitamente tiene mas velocidad que un hashcode!!!!
+         * 
+         */
+
+        int [][] visited = new int[grid.length][grid[0].length];
+        Stack<HashMap<Integer,Integer>> dfsLookup = new Stack<>();
+   //     int hasherEncoder = grid.length*grid[0].length;
+
+        Stack<Integer> dfsLookupV2 = new Stack<>();
+
+        int[] x = {-1,0,0,1};
+        int[] y = {0,-1,1,0};
+
+        HashMap<Integer,Integer> adder = new HashMap<>();
+        int[] adderv2 = new int[2];
+
+        int i=0,j=0,cycleCounter=0,h=0,z=0;
+
+        int minimumCycle = 0;
+
+        char patternLookup = '0';
+        
+        while (h<grid.length) {
+            
+            while(z<grid[0].length){
+              
+                patternLookup = grid[h][z];  // de acuerdo a la letra identificada veremos que es lo que resulta
+
+                adder.clear();
+                adder.put(h, z);
+
+                adderv2[0]=h;
+                adderv2[1]=z;
+                
+                int numberOfNeighbours = numberOfNeighbours(patternLookup, grid, adder, x, y);
+        //        System.out.println(numberOfNeighbours+" cuantos tiene");
+
+
+                if(/* !visitedCoords.contains(new HashMap<>(adder)) */ visited[h][z] !=1 && numberOfNeighbours>=2){
+          //          System.out.println(adder.toString()+" que cordenada andas iterando, para la letra "+patternLookup);
+
+                    dfsLookupV2.add(((h*grid[0].length)+z)); // añadelo por lista y es más rapidin
+                    dfsLookupV2.add(((h*grid[0].length)+z));
+//                    dfsLookup.add(new HashMap<>(adder));
+  //                  dfsLookup.add(new HashMap<>(adder));
+
+                    visited[h][z] = 1;
+                   // visitedCoords.add(new HashMap<>(adder));
+
+                    // si la coordenada no ha sido utilizada en algún dfs previo, continua, es irrelevante comprobar por letra, es por coordenada.
+
+                    /*Mientras la pila esté llena, implementa el dfs a partir del punto identificado durante 
+                    la matriz */
+                    while(dfsLookupV2.size()>0){
+
+                //        Entry<Integer,Integer> coordObtainerPivot = dfsLookup.pop().entrySet().iterator().next(); // obten el primer elemento de la pila, y obten la coordenada sin usar llave
+
+                        int coordObtainerx = dfsLookupV2.pop();
+
+                        i=coordObtainerx / grid[0].length;
+                        j=coordObtainerx % grid[0].length;
+                        
+                     //   i=coordObtainerPivot.getKey(); j=coordObtainerPivot.getValue();
+                     //   adder.clear();
+                        adderv2=new int[2];
+                      //  adder.put(i, j); // el visited siempre del nodo que estás recorriendo al final we
+                      
+                        
+                       // visitedCoords.add(new HashMap<>(adder));
+                        visited[i][j] = 1;
+                        
+                        for (int k = 0; k < y.length; k++) {
+
+                             adderv2=new int[2];
+                            
+                            /**Calcula las 4 direcciones de la coordenada */
+                            int xCord = i+x[k];
+
+                            int yCord = j+y[k];
+
+                           /**SIGNIFICA QUE ES UNA COORDENADA VALIDA */
+
+                            if(xCord>=0 && xCord<grid.length && yCord >=0 && yCord <grid[0].length){
+
+                                if(grid[xCord][yCord] == patternLookup){ // si el vecino es igual a la lñetra que estamos buscando men...
+                                 //   adder.put(xCord, yCord);// procesamos la coordenada como dupla para procesarlo más facil
+
+                                    if(visited[xCord][yCord]!=1){ // ... y si no está en el arreglo de visitados
+
+                                        if(dfsLookupV2.contains((xCord*grid[0].length)+yCord)){
+                                            cycleCounter++;
+                                        }
+
+                                       // dfsLookup.add(new HashMap<>(adder)); // añadelo a la pila duiramte la iteración del for we, la coordenada vecina a la pila
+                                       dfsLookupV2.add((xCord*grid[0].length)+yCord);
+                                        minimumCycle++;
+                                        
+                                    }
+                                }
+
+                            }
+                        }    
+                        
+                 //       adder.clear();
+                        adderv2=new int[2];
+ 
+                   //     System.out.println(dfsLookupV2.toString()+" como es el estado de la pila después de iterar");
+                     //   Thread.sleep(100); 
+                    }
+
+      //              System.out.println(minimumCycle+" minimum cycle");
+
+
+                }
+                z++;
+                minimumCycle = 0;
+            }
+          //  minimumCycle = 0;
+            z=0;
+            h++;
+        }
+        
+
+        System.out.println(cycleCounter);
+
+        return cycleCounter>0 ? true : false;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+//prueba();
+
+     //  char[][] cycles = {{'a','a','a','a'},{'a','b','b','a'},{'a','b','b','a'},{'a','a','a','a'}};
+
+       char[][] cycles = {{'c','c','c','a'},{'c','d','c','c'},{'c','c','e','c'},{'f','c','c','c'}};
+
+   /*   char [][] cycles = {{'a','a','a'},
+                        {'a','a','a'},
+                        {'a','b','a'},
+                        {'b','a','b'},
+                        {'a','b','a'}}; */
+
+/*          char[][] cycles = {{'c','a','d'},
+                        {'a','a','a'},
+                        {'a','a','d'},
+                        {'a','c','d'},
+                        {'a','b','c'}};   
+ */
+    
+        System.out.println(containsCycle(cycles));
      //   int [][] graphs={{0,10},{3,18},{5,5},{6,11},{11,14},{13,1},{15,1},{17,4}};
        // int[][] graphs = {{1,4},{2,4},{3,1},{3,2}}; //mal debe ser true
 
@@ -1550,9 +1734,9 @@ public class App {
 
       //  int [][] graphs={{1,0},{0,2},{2,1}};
     //   int[][] graphs = {{1,0},{2,0},{2,1},{3,1},{3,2},{4,2},{4,3},{5,3},{5,4},{6,4},{6,5},{7,5},{7,6},{8,6},{8,7},{9,7},{9,8},{10,8},{10,9},{11,9},{11,10},{12,10},{12,11},{13,11},{13,12},{14,12},{14,13},{15,13},{15,14},{16,14},{16,15},{17,15},{17,16},{18,16},{18,17},{19,17},{19,18},{20,18},{20,19},{21,19},{21,20},{22,20},{22,21},{23,21},{23,22},{24,22},{24,23},{25,23},{25,24},{26,24},{26,25},{27,25},{27,26},{28,26},{28,27},{29,27},{29,28},{30,28},{30,29},{31,29},{31,30},{32,30},{32,31},{33,31},{33,32},{34,32},{34,33},{35,33},{35,34},{36,34},{36,35},{37,35},{37,36},{38,36},{38,37},{39,37},{39,38},{40,38},{40,39},{41,39},{41,40},{42,40},{42,41},{43,41},{43,42},{44,42},{44,43},{45,43},{45,44},{46,44},{46,45},{47,45},{47,46},{48,46},{48,47},{49,47},{49,48},{50,48},{50,49},{51,49},{51,50},{52,50},{52,51},{53,51},{53,52},{54,52},{54,53},{55,53},{55,54},{56,54},{56,55},{57,55},{57,56},{58,56},{58,57},{59,57},{59,58},{60,58},{60,59},{61,59},{61,60},{62,60},{62,61},{63,61},{63,62},{64,62},{64,63},{65,63},{65,64},{66,64},{66,65},{67,65},{67,66},{68,66},{68,67},{69,67},{69,68},{70,68},{70,69},{71,69},{71,70},{72,70},{72,71},{73,71},{73,72},{74,72},{74,73},{75,73},{75,74},{76,74},{76,75},{77,75},{77,76},{78,76},{78,77},{79,77},{79,78},{80,78},{80,79},{81,79},{81,80},{82,80},{82,81},{83,81},{83,82},{84,82},{84,83},{85,83},{85,84},{86,84},{86,85},{87,85},{87,86},{88,86},{88,87},{89,87},{89,88},{90,88},{90,89},{91,89},{91,90},{92,90},{92,91},{93,91},{93,92},{94,92},{94,93},{95,93},{95,94},{96,94},{96,95},{97,95},{97,96},{98,96},{98,97},{99,97}};
-    int[][] graphs = {{0,1},{2,3},{1,2},{3,0}};    
+  //  int[][] graphs = {{0,1},{2,3},{1,2},{3,0}};    
     //int [][] graphs={{1,0},{0,1}};
-    System.out.println(canFinish(4, graphs));
+   // System.out.println(canFinish(4, graphs));
 
       /*   System.out.println("Hello World!");
         System.out.println("ESCALERA reves "+fib(3)); */
