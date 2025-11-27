@@ -1,6 +1,8 @@
 package com.pruebastecnicas;
 
+import java.lang.annotation.Target;
 import java.net.Socket;
+import java.nio.channels.Pipe.SourceChannel;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,273 +33,250 @@ import java.util.stream.IntStream;
  */
 public class App {
 
-    /*
-     * public void rotateV2(int[][] matrix) {
-     * int tempSwapper = 0,tempSwapCol=0;
-     * for(int i = 0;i<matrix.length;i++){
-     * for(int j=0;j<matrix[i].length;j++){
-     * 
-     * if(j<i){
-     * tempSwapper = matrix[j][i];
-     * matrix[j][i] = matrix[i][j];
-     * matrix[i][j] = tempSwapper;
-     * 
-     * }
-     * }
-     * 
-     * 
-     * 
-     * }
-     * 
-     * for(int i = 0;i<matrix.length;i++){
-     * for(int j=0;j<matrix[i].length / 2;j++){
-     * int colLength = matrix[i].length-1;
-     * tempSwapCol = matrix[i][j]; //[0][2],[1][2]
-     * matrix[i][j] = matrix[i][colLength-j];
-     * matrix[i][colLength-j] = tempSwapCol;
-     * }
-     * }
-     * }
-     */
+    public void rotateV2(int[][] matrix) {
+        int tempSwapper = 0, tempSwapCol = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
 
-    /**
-     * public static int[] findDiagonalOrder(int[][] mat) throws
-     * InterruptedException {
-     * int i=0,j=0,diag=0,sizeMat = mat.length,sizeCol = mat[0].length,diagQuantity
-     * = (sizeMat+sizeCol)-1,globalArr=0;
-     * int[] matrixNew;
-     * int kd=0;
-     * if(sizeMat ==1){
-     * matrixNew = new int[sizeCol];
-     * 
-     * while(kd<sizeCol){
-     * matrixNew[kd] = mat[0][kd];
-     * kd+=1;
-     * }
-     * return matrixNew;
-     * }
-     * 
-     * if(sizeCol == 1){
-     * matrixNew = new int[sizeMat];
-     * 
-     * while(kd<sizeMat){
-     * matrixNew[kd] = mat[kd][0];
-     * kd+=1;
-     * }
-     * return matrixNew;
-     * }
-     * 
-     * matrixNew = new int[sizeMat*sizeCol];
-     * //System.out.println(matrixNew.length+" tamaño arr");
-     * 
-     * while(diag < diagQuantity){
-     * while(j<=diag){
-     * int diagPairCompare = diag - j;
-     * if(j<sizeMat && diagPairCompare < sizeCol){
-     * matrixNew[globalArr] = mat[diagPairCompare][j];
-     * globalArr++;
-     * }
-     * j++;
-     * }
-     * 
-     * System.out.println("ya termino");
-     * j=0;
-     * diag++;
-     * }
-     * return matrixNew;
-     * }
-     * 
-     */
+                if (j < i) {
+                    tempSwapper = matrix[j][i];
+                    matrix[j][i] = matrix[i][j];
+                    matrix[i][j] = tempSwapper;
 
-    /*
-     * public static int[][] matrixReshape(int[][] mat, int r, int c) {
-     * int k=0;
-     * int[][] matrixNew = new int[r][c];
-     * 
-     * if (mat.length * mat[0].length != r * c) return mat; // no se puede reshaping
-     * for (int i = 0; i < mat.length; i++) {
-     * for (int j = 0; j < mat[i].length; j++) {
-     * matrixNew[k/c][k%c] = mat[i][j];
-     * k++;
-     * }
-     * 
-     * 
-     * }
-     * 
-     * return matrixNew;
-     * }
-     */
+                }
+            }
 
-    /*
-     * public static boolean isToeplitzMatrix(int[][] matrix) throws
-     * InterruptedException {
-     * boolean finalResult = true, booleanDir = false;
-     * 
-     * int rowSize = matrix.length, colSize = matrix[0].length, numDiagonals =
-     * (rowSize + colSize) - 1, i = 0,
-     * j = colSize - 1, aux = 0, aux2 = 0, aux3 = colSize - 2;
-     * 
-     * while (i < numDiagonals) {
-     * System.out.println(i + ">>");
-     * 
-     * if (!booleanDir) {
-     * if (i > rowSize - 1) {
-     * aux = rowSize - 1;
-     * j = colSize - 2;
-     * } else {
-     * aux = i;
-     * j = colSize - 1;
-     * }
-     * } else {
-     * aux = rowSize - 1;
-     * j = aux3;
-     * }
-     * 
-     * while (aux > 0) {
-     * if (j == colSize - 1 && i == 0 || j == 0 && i == rowSize) {
-     * finalResult = true;
-     * break;
-     * }
-     * 
-     * if (j - 1 < 0) {
-     * break;
-     * }
-     * aux2 = (aux) - 1;
-     * //System.out.println(aux + ">" + j + "<" + (aux2) + "<" + (j - 1));
-     * if (matrix[aux][j] == matrix[aux2][j - 1]) {
-     * finalResult = true;
-     * } else {
-     * finalResult = false;
-     * break; // aqui termina el ciclo y la validación
-     * }
-     * 
-     * j--;
-     * aux--;
-     * // Thread.sleep(1000);
-     * }
-     * if(!finalResult) break;
-     * if (i > rowSize - 1) booleanDir = true;
-     * i++;
-     * if (booleanDir) aux3--;
-     * }
-     * 
-     * return finalResult;
-     * }
-     */
+        }
 
-    /*
-     * public static int largestOverlap(int[][] img1, int[][] img2) throws
-     * InterruptedException {
-     * int counter = 0, rowSize = img1.length - 1, colSize = img1[0].length - 1;
-     * 
-     * if (rowSize != img2.length - 1 && colSize != img2[0].length - 1)
-     * return counter;
-     * 
-     * if (rowSize == 0 && colSize == 0 && img1[0][0] == 1 && img2[0][0] == 1) {
-     * return 1;
-     * } else if (rowSize == 0 && colSize == 0 && img1[0][0] == 0 && img2[0][0] ==
-     * 0) {
-     * return 0;
-     * }
-     * 
-     * int x2 = 0, y2 = 0, x = 0, y = 0, i = 0, j = 0, k = 0, c = 0;
-     * Set<Integer> loopStopper = new HashSet<>();
-     * while (true) {
-     * i = 0;
-     * j = 0;
-     * k = 0;
-     * c = 0;
-     * loopStopper.clear(); // con esto detenemos el bucle continuo
-     * while (k <= img2.length - 1) {
-     * while (c <= img2[0].length - 1) {
-     * if (img2[k][c] == 1 && img1[k][c]!= 1) {
-     * x2 = k;
-     * y2 = c;
-     * 
-     * // System.out.println("ciclo de filas");
-     * while (i <= rowSize) {
-     * while (j <= colSize) {
-     * x = j;
-     * y = i; // al reves para match
-     * if ((y2 == y ) && img1[x][y] == 1 && img2[x][y]!=1) {
-     * img1[x][y] = 0;
-     * img1[x2][y2] = 1;
-     * counter++;
-     * loopStopper.add(1);
-     * } else {
-     * loopStopper.add(0);
-     * }
-     * 
-     * 
-     * j += 1;
-     * }
-     * i += 1;
-     * j = 0;
-     * }
-     * 
-     * x = 0;
-     * y = 0;
-     * i = 0;
-     * j = 0;
-     * 
-     * while (i <= rowSize) {
-     * while (j <= colSize) {
-     * x = i;
-     * y = j; // derecho para columnas
-     * if ((x2 == x ) && img1[x][y] == 1 && img1[x2][y2]!=1) {
-     * img1[x][y] = 0;
-     * img1[x2][y2] = 1;
-     * counter++;
-     * loopStopper.add(1);
-     * } else {
-     * loopStopper.add(0);
-     * 
-     * }
-     * 
-     * j+=1;
-     * }
-     * 
-     * i+=1;
-     * j=0;
-     * }
-     * 
-     * i = 0;
-     * j = 0;
-     * while (i <= rowSize) {
-     * while (j <= colSize) {
-     * // si están en diagonal (diferencia absoluta de fila = de columna)
-     * if (Math.abs(i - x2) == Math.abs(j - y2) && img1[i][j] == 1 && img1[x2][y2]
-     * != 1) {
-     * img1[i][j] = 0;
-     * img1[x2][y2] = 1;
-     * counter++;
-     * loopStopper.add(1);
-     * }
-     * j++;
-     * }
-     * i++;
-     * j = 0;
-     * }
-     * 
-     * }else{
-     * loopStopper.add(0);
-     * }
-     * 
-     * c++;
-     * }
-     * k++;
-     * c = 0;
-     * }
-     * 
-     * 
-     * if(!loopStopper.contains(1)){
-     * break;
-     * }
-     * }
-     * 
-     * return counter;
-     * }
-     */
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length / 2; j++) {
+                int colLength = matrix[i].length - 1;
+                tempSwapCol = matrix[i][j]; // [0][2],[1][2]
+                matrix[i][j] = matrix[i][colLength - j];
+                matrix[i][colLength - j] = tempSwapCol;
+            }
+        }
+    }
+
+    public static int[] findDiagonalOrder(int[][] mat) throws InterruptedException {
+        int i = 0, j = 0, diag = 0, sizeMat = mat.length, sizeCol = mat[0].length,
+                diagQuantity = (sizeMat + sizeCol) - 1, globalArr = 0;
+        int[] matrixNew;
+        int kd = 0;
+        if (sizeMat == 1) {
+            matrixNew = new int[sizeCol];
+
+            while (kd < sizeCol) {
+                matrixNew[kd] = mat[0][kd];
+                kd += 1;
+            }
+            return matrixNew;
+        }
+
+        if (sizeCol == 1) {
+            matrixNew = new int[sizeMat];
+
+            while (kd < sizeMat) {
+                matrixNew[kd] = mat[kd][0];
+                kd += 1;
+            }
+            return matrixNew;
+        }
+        matrixNew = new int[sizeMat * sizeCol]; // System.out.println(matrixNew.length+"
+                                                // tamaño
+                                                // arr");
+        while (diag < diagQuantity) {
+            while (j <= diag) {
+                int diagPairCompare = diag - j;
+                if (j < sizeMat && diagPairCompare < sizeCol) {
+                    matrixNew[globalArr] = mat[diagPairCompare][j];
+                    globalArr++;
+                }
+                j++;
+            }
+            System.out.println("ya termino");
+            j = 0;
+            diag++;
+        }
+        return matrixNew;
+    }
+
+    public static int[][] matrixReshape(int[][] mat, int r, int c) {
+        int k = 0;
+        int[][] matrixNew = new int[r][c];
+        if (mat.length * mat[0].length != r * c)
+            return mat; // no se puede reshaping
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[i].length; j++) {
+                matrixNew[k / c][k % c] = mat[i][j];
+                k++;
+            }
+        }
+        return matrixNew;
+    }
+
+    public static boolean isToeplitzMatrix(int[][] matrix) throws InterruptedException {
+        boolean finalResult = true, booleanDir = false;
+
+        int rowSize = matrix.length, colSize = matrix[0].length, numDiagonals = (rowSize + colSize) - 1, i = 0,
+                j = colSize - 1, aux = 0, aux2 = 0, aux3 = colSize - 2;
+
+        while (i < numDiagonals) {
+            System.out.println(i + ">>");
+
+            if (!booleanDir) {
+                if (i > rowSize - 1) {
+                    aux = rowSize - 1;
+                    j = colSize - 2;
+                } else {
+                    aux = i;
+                    j = colSize - 1;
+                }
+            } else {
+                aux = rowSize - 1;
+                j = aux3;
+            }
+
+            while (aux > 0) {
+                if (j == colSize - 1 && i == 0 || j == 0 && i == rowSize) {
+                    finalResult = true;
+                    break;
+                }
+
+                if (j - 1 < 0) {
+                    break;
+                }
+                aux2 = (aux) - 1;
+                // System.out.println(aux + ">" + j + "<" + (aux2) + "<" + (j - 1));
+                if (matrix[aux][j] == matrix[aux2][j - 1]) {
+                    finalResult = true;
+                } else {
+                    finalResult = false;
+                    break; // aqui termina el ciclo y la validación
+                }
+
+                j--;
+                aux--;
+                // Thread.sleep(1000);
+            }
+            if (!finalResult)
+                break;
+            if (i > rowSize - 1)
+                booleanDir = true;
+            i++;
+            if (booleanDir)
+                aux3--;
+        }
+
+        return finalResult;
+    }
+
+    public static int largestOverlap(int[][] img1, int[][] img2) throws InterruptedException {
+        int counter = 0, rowSize = img1.length - 1, colSize = img1[0].length - 1;
+
+        if (rowSize != img2.length - 1 && colSize != img2[0].length - 1)
+            return counter;
+
+        if (rowSize == 0 && colSize == 0 && img1[0][0] == 1 && img2[0][0] == 1) {
+            return 1;
+        } else if (rowSize == 0 && colSize == 0 && img1[0][0] == 0 && img2[0][0] == 0) {
+            return 0;
+        }
+
+        int x2 = 0, y2 = 0, x = 0, y = 0, i = 0, j = 0, k = 0, c = 0;
+        Set<Integer> loopStopper = new HashSet<>();
+        while (true) {
+            i = 0;
+            j = 0;
+            k = 0;
+            c = 0;
+            loopStopper.clear(); // con esto detenemos el bucle continuo
+            while (k <= img2.length - 1) {
+                while (c <= img2[0].length - 1) {
+                    if (img2[k][c] == 1 && img1[k][c] != 1) {
+                        x2 = k;
+                        y2 = c;
+
+                        // System.out.println("ciclo de filas");
+                        while (i <= rowSize) {
+                            while (j <= colSize) {
+                                x = j;
+                                y = i; // al reves para match
+                                if ((y2 == y) && img1[x][y] == 1 && img2[x][y] != 1) {
+                                    img1[x][y] = 0;
+                                    img1[x2][y2] = 1;
+                                    counter++;
+                                    loopStopper.add(1);
+                                } else {
+                                    loopStopper.add(0);
+                                }
+
+                                j += 1;
+                            }
+                            i += 1;
+                            j = 0;
+                        }
+
+                        x = 0;
+                        y = 0;
+                        i = 0;
+                        j = 0;
+
+                        while (i <= rowSize) {
+                            while (j <= colSize) {
+                                x = i;
+                                y = j; // derecho para columnas
+                                if ((x2 == x) && img1[x][y] == 1 && img1[x2][y2] != 1) {
+                                    img1[x][y] = 0;
+                                    img1[x2][y2] = 1;
+                                    counter++;
+                                    loopStopper.add(1);
+                                } else {
+                                    loopStopper.add(0);
+
+                                }
+
+                                j += 1;
+                            }
+
+                            i += 1;
+                            j = 0;
+                        }
+
+                        i = 0;
+                        j = 0;
+                        while (i <= rowSize) {
+                            while (j <= colSize) {
+                                // si están en diagonal (diferencia absoluta de fila = de columna)
+                                if (Math.abs(i - x2) == Math.abs(j - y2) && img1[i][j] == 1 && img1[x2][y2] != 1) {
+                                    img1[i][j] = 0;
+                                    img1[x2][y2] = 1;
+                                    counter++;
+                                    loopStopper.add(1);
+                                }
+                                j++;
+                            }
+                            i++;
+                            j = 0;
+                        }
+
+                    } else {
+                        loopStopper.add(0);
+                    }
+
+                    c++;
+                }
+                k++;
+                c = 0;
+            }
+
+            if (!loopStopper.contains(1)) {
+                break;
+            }
+        }
+
+        return counter;
+    }
 
     public static int[][] transpose(int[][] matrix) {
         int i = 0, j = 0, sizeMat = matrix.length - 1, sizeCol = matrix[0].length - 1;
@@ -320,7 +299,6 @@ public class App {
                         matrix[i][j] = matrix[j][i];
                         matrix[j][i] = temp;
 
-                       
                         visited[j][i] = 1;
                     }
                 }
@@ -687,40 +665,40 @@ public class App {
     }
 
     public static boolean isValidSudoku(char[][] board) {
-        int i = 0, j = 0, k = 0, pivotter = 9, colRep = 3, rowRep = 3, pivotCol = 0,pivotRow = 0,charNumCounter=0;
+        int i = 0, j = 0, k = 0, pivotter = 9, colRep = 3, rowRep = 3, pivotCol = 0, pivotRow = 0, charNumCounter = 0;
         boolean returnVal = true;
         HashSet<Integer> isValid = new HashSet<>();
 
-        HashMap<Integer,ArrayList<Map<Integer,Integer>>> coords = new HashMap<>();
+        HashMap<Integer, ArrayList<Map<Integer, Integer>>> coords = new HashMap<>();
         while (i < pivotter) {
 
             while (j < rowRep) {
                 while (k < colRep) {
-                    //System.out.print(board[j][k]);
-                    if((int) board[j][k] != 46){
-                       
-                        isValid.add(Integer.valueOf(board[j][k]-'0'));
+                    // System.out.print(board[j][k]);
+                    if ((int) board[j][k] != 46) {
+
+                        isValid.add(Integer.valueOf(board[j][k] - '0'));
                         charNumCounter++;
-                        if(!coords.containsKey(Integer.valueOf(board[j][k]-'0'))){
-                         //    System.out.println("condicional primera: "+board[j][k]+" "+j+" "+k);
-                            Map<Integer,Integer> coord = new HashMap();
+                        if (!coords.containsKey(Integer.valueOf(board[j][k] - '0'))) {
+                            // System.out.println("condicional primera: "+board[j][k]+" "+j+" "+k);
+                            Map<Integer, Integer> coord = new HashMap();
                             coord.put(j, k);
-                            
-                            ArrayList<Map<Integer,Integer>> coordHand = new ArrayList<>();
+
+                            ArrayList<Map<Integer, Integer>> coordHand = new ArrayList<>();
 
                             coordHand.add(coord);
-                            coords.put(Integer.valueOf( board[j][k]-'0'),coordHand);
-                        }else{
-                           // System.out.println("condicional alterna trigger: "+board[j][k]+" "+j+" "+k);
-                            Map<Integer,Integer> coord = new HashMap();
+                            coords.put(Integer.valueOf(board[j][k] - '0'), coordHand);
+                        } else {
+                            // System.out.println("condicional alterna trigger: "+board[j][k]+" "+j+" "+k);
+                            Map<Integer, Integer> coord = new HashMap();
                             coord.put(j, k);
 
-                            ArrayList<Map<Integer,Integer>> pivot = coords.get(Integer.valueOf(board[j][k]-'0'));
+                            ArrayList<Map<Integer, Integer>> pivot = coords.get(Integer.valueOf(board[j][k] - '0'));
 
-                            for (Map<Integer,Integer> map : pivot) {
-                                for (Entry<Integer,Integer> map2 : map.entrySet()) {
-                                    if(map2.getKey() == j || map2.getValue() == k){
-                                 //       System.out.println("SI DETECTA LAS COLS? " +board[j][k]);
+                            for (Map<Integer, Integer> map : pivot) {
+                                for (Entry<Integer, Integer> map2 : map.entrySet()) {
+                                    if (map2.getKey() == j || map2.getValue() == k) {
+                                        // System.out.println("SI DETECTA LAS COLS? " +board[j][k]);
                                         returnVal = false;
                                         break;
                                     }
@@ -728,39 +706,43 @@ public class App {
                             }
 
                             pivot.add(coord);
-                            coords.put(Integer.valueOf( board[j][k]-'0'),pivot);
-                            //coords.put(Integer.valueOf(board[j][k]-'0'), .get(0).add(coord));
+                            coords.put(Integer.valueOf(board[j][k] - '0'), pivot);
+                            // coords.put(Integer.valueOf(board[j][k]-'0'), .get(0).add(coord));
                         }
                     }
-                    
+
                     k++;
                 }
 
-             //   System.out.println();
+                // System.out.println();
                 k = pivotCol;
                 j++;
             }
 
-           // System.out.println(charNumCounter+"<>"+isValid.size());
-      //     System.out.println(coords.toString());
-            if(charNumCounter!=isValid.size()){
+            // System.out.println(charNumCounter+"<>"+isValid.size());
+            // System.out.println(coords.toString());
+            if (charNumCounter != isValid.size()) {
                 returnVal = false;
                 break;
             }
 
-            charNumCounter=0;
+            charNumCounter = 0;
             isValid.clear();
 
             // rowRep=0;
             colRep += 3;
             pivotCol += 3;
             k = pivotCol;
-           
-          //  System.out.println(i+" CUANTO PEGA ACA? " + j + " " + k + " " + rowRep + " " + colRep);
-            if (i ==2 || i== 5 || i==8) {
-                colRep = 3; rowRep = rowRep+=3; pivotCol = 0;pivotRow += 3;
+
+            // System.out.println(i+" CUANTO PEGA ACA? " + j + " " + k + " " + rowRep + " "
+            // + colRep);
+            if (i == 2 || i == 5 || i == 8) {
+                colRep = 3;
+                rowRep = rowRep += 3;
+                pivotCol = 0;
+                pivotRow += 3;
             }
-             k = pivotCol;
+            k = pivotCol;
             j = pivotRow;
             i++;
         }
@@ -769,11 +751,10 @@ public class App {
     }
 
     public static List<List<String>> groupAnagrams(String[] strs) {
-        int i=0;
-        LinkedHashMap<String,ArrayList<String>> pivot = new LinkedHashMap<>();
+        int i = 0;
+        LinkedHashMap<String, ArrayList<String>> pivot = new LinkedHashMap<>();
 
         List<List<String>> finalPiv = new ArrayList<>();
-
 
         for (int j = 0; j < strs.length; j++) {
             char[] piv = strs[j].toCharArray();
@@ -784,142 +765,141 @@ public class App {
             String key = new String(piv);
             String orig = new String(pivOrig);
 
-        //    System.out.println("iterables: "+key);
-            
-            if(!pivot.containsKey(key)){
+            // System.out.println("iterables: "+key);
+
+            if (!pivot.containsKey(key)) {
                 ArrayList<String> cache = new ArrayList<>();
                 cache.add(orig);
                 pivot.put(key, cache);
-            }else{
+            } else {
                 ArrayList<String> cache = pivot.get(key);
                 cache.add(orig);
                 pivot.put(key, cache);
             }
         }
 
-        //System.out.println(pivot.toString());
+        // System.out.println(pivot.toString());
 
-        for (Entry<String,ArrayList<String>> list : pivot.entrySet()) {
+        for (Entry<String, ArrayList<String>> list : pivot.entrySet()) {
             List<String> preSave = new ArrayList<>();
             for (String list2 : list.getValue()) {
-         //       System.out.println(list2+" LISTA");
+                // System.out.println(list2+" LISTA");
 
                 preSave.add(list2);
             }
 
             finalPiv.add(preSave);
         }
-        
-     //   Collections.sort(finalPiv);
+
+        // Collections.sort(finalPiv);
         Collections.reverse(finalPiv);
         System.out.println(finalPiv.toString());
         return finalPiv;
     }
 
-    /*done */
+    /* done */
     public static List<Integer> findAnagrams(String s, String p) throws InterruptedException {
         List<Integer> output = new ArrayList<Integer>();
-        HashMap<Character,Integer> mapper = new HashMap<>();
-        HashMap<Character,Integer> stateInit = new HashMap<>();
+        HashMap<Character, Integer> mapper = new HashMap<>();
+        HashMap<Character, Integer> stateInit = new HashMap<>();
 
         for (Character letter : p.toCharArray()) {
-             if(!stateInit.containsKey(letter)){
+            if (!stateInit.containsKey(letter)) {
                 stateInit.put(letter, 1);
-            }else{
-                 stateInit.put(letter, stateInit.get(letter)+1);
+            } else {
+                stateInit.put(letter, stateInit.get(letter) + 1);
             }
         }
-       // System.out.println(s.length()+"<>"+p.length());
-        if(p.length()>s.length()){
+        // System.out.println(s.length()+"<>"+p.length());
+        if (p.length() > s.length()) {
             return output;
         }
-       
-        int i=0,j=0,jStop = p.length()-1;
-        String nextB = s.substring(i, jStop+1);
+
+        int i = 0, j = 0, jStop = p.length() - 1;
+        String nextB = s.substring(i, jStop + 1);
 
         for (char letter : nextB.toCharArray()) {
-            if(!mapper.containsKey(letter)){
+            if (!mapper.containsKey(letter)) {
                 mapper.put(letter, 1);
-            }else{
-                 mapper.put(letter, mapper.get(letter)+1);
+            } else {
+                mapper.put(letter, mapper.get(letter) + 1);
             }
         }
 
-        while(jStop<s.length()){
-            nextB = s.substring(i, jStop+1);
-         //   System.out.println("SUBSTRING A ITERAR "+nextB);
+        while (jStop < s.length()) {
+            nextB = s.substring(i, jStop + 1);
+            // System.out.println("SUBSTRING A ITERAR "+nextB);
 
-            if(nextB.equals(p) || mapper.equals(stateInit)){
-             //   System.out.println("DEBE SERVIR");
+            if (nextB.equals(p) || mapper.equals(stateInit)) {
+                // System.out.println("DEBE SERVIR");
                 output.add(i);
             }
 
             int removal = mapper.get(s.charAt(i));
-            removal = removal-1 <= 0 ? 0 : removal-1;
+            removal = removal - 1 <= 0 ? 0 : removal - 1;
 
-            if(removal<=0){
+            if (removal <= 0) {
                 mapper.remove(s.charAt(i));
-            }else{
+            } else {
                 mapper.put(s.charAt(i), removal);
             }
-            
-          //  System.out.println(jStop+" valor index");
+
+            // System.out.println(jStop+" valor index");
             jStop++;
             i++;
-          //  System.out.println(mapper.toString()+"como queda antes");
+            // System.out.println(mapper.toString()+"como queda antes");
 
-       //     System.out.println(jStop+" valor index");
-           if(jStop<s.length()){
-                 mapper.put(s.charAt(jStop), mapper.containsKey(s.charAt(jStop)) ? mapper.get(s.charAt(jStop))+1 : 1);
-           }
+            // System.out.println(jStop+" valor index");
+            if (jStop < s.length()) {
+                mapper.put(s.charAt(jStop), mapper.containsKey(s.charAt(jStop)) ? mapper.get(s.charAt(jStop)) + 1 : 1);
+            }
 
-          //  System.out.println(mapper.toString()+"como queda despues");
+            // System.out.println(mapper.toString()+"como queda despues");
 
-          //  Thread.sleep(50000);
+            // Thread.sleep(50000);
         }
-        
+
         return output;
     }
 
-   
-
-/*DONE */
+    /* DONE */
     public static int lengthOfLongestSubstring(String s) {
-        int i = 0,last=0,j=0; boolean flag = false;
+        int i = 0, last = 0, j = 0;
+        boolean flag = false;
 
         String builder = "";
 
-        if(s.isBlank() && !s.isEmpty()){
+        if (s.isBlank() && !s.isEmpty()) {
             return 1;
         }
 
         Set<String> subs = new HashSet<>();
         Set<Character> checker = new HashSet<>();
-        
-        while(i<s.length()){
-            j=i;
+
+        while (i < s.length()) {
+            j = i;
             builder = "";
-            while(j<s.length()){
-                System.out.println(builder+"<>"+String.valueOf(s.charAt(j))+"<>"+checker.toString()+"<>"+j);
-                if(!checker.contains(s.charAt(j))){
+            while (j < s.length()) {
+                System.out.println(builder + "<>" + String.valueOf(s.charAt(j)) + "<>" + checker.toString() + "<>" + j);
+                if (!checker.contains(s.charAt(j))) {
                     System.out.println("PASA");
-                    builder +=String.valueOf(s.charAt(j));
+                    builder += String.valueOf(s.charAt(j));
                     checker.add(s.charAt(j));
                     subs.add(builder);
-                }else{
-                    System.out.println("no deberia "+s.charAt(j));
+                } else {
+                    System.out.println("no deberia " + s.charAt(j));
                     subs.add(builder);
                     flag = true;
-                  //  subs.clear();
-                  checker.clear();
-                    builder="";
+                    // subs.clear();
+                    checker.clear();
+                    builder = "";
                 }
                 j++;
 
-               // System.out.println(builder);
-               
+                // System.out.println(builder);
+
             }
-            j=0;
+            j = 0;
             flag = false;
             i++;
         }
@@ -930,70 +910,68 @@ public class App {
 
         System.out.println(checker.toString());
 
-        Optional<Integer> length = subs.stream().map(charx->charx.length()).max(Comparator.naturalOrder());
+        Optional<Integer> length = subs.stream().map(charx -> charx.length()).max(Comparator.naturalOrder());
 
         return length.isPresent() ? length.get() : 0;
 
     }
 
-
-     public static int threeSumMulti(int[] arr, int target) throws InterruptedException {
+    public static int threeSumMulti(int[] arr, int target) throws InterruptedException {
         Arrays.sort(arr);
-        TreeMap<Integer,Integer> freq = new TreeMap<>(Comparator.reverseOrder());
+        TreeMap<Integer, Integer> freq = new TreeMap<>(Comparator.reverseOrder());
         for (int i : arr) {
             if (!freq.containsKey(i)) {
                 freq.put(i, 1);
-            }else{
-                freq.put(i, freq.get(i)+1);
+            } else {
+                freq.put(i, freq.get(i) + 1);
             }
         }
 
-        int i=0,c=0,j=0,output=0;
+        int i = 0, c = 0, j = 0, output = 0;
         List<Integer> summer = new ArrayList<>();
         List<Integer> pivot = new ArrayList<>();
 
         pivot.addAll(freq.keySet());
 
         System.out.println(pivot.toString());
-        while(i<freq.size()){
+        while (i < freq.size()) {
             int firstNumber = pivot.get(i);
             int firstFrequency = freq.get(firstNumber) * firstNumber;
-            
-            if(firstFrequency<target){
+
+            if (firstFrequency < target) {
                 for (int k = 0; k < freq.get(firstNumber); k++) {
                     summer.add(freq.get(firstNumber));
                 }
-            }else{
+            } else {
                 summer.add(freq.get(firstNumber));
             }
 
-
-
-
             int secNum = 0;
             int thirdNum = 0;
-            while(j<freq.size()){
+            while (j < freq.size()) {
                 secNum = pivot.get(j);
-                if(firstNumber+secNum < target){
+                if (firstNumber + secNum < target) {
                     summer.add(freq.get(pivot.get(j)));
-                    /*while (c<freq.size()) {
-                        thirdNum =pivot.get(c);
-                        if(firstNumber+secNum+thirdNum == target){
-                            summer.add(freq.get(thirdNum));
-                            break;
-                        }
-                        c++;
-                    } */
+                    /*
+                     * while (c<freq.size()) {
+                     * thirdNum =pivot.get(c);
+                     * if(firstNumber+secNum+thirdNum == target){
+                     * summer.add(freq.get(thirdNum));
+                     * break;
+                     * }
+                     * c++;
+                     * }
+                     */
 
                     break;
-                }     
+                }
                 j++;
                 c++;
             }
 
             i++;
-          //  j=i+1;
-            c=i;
+            // j=i+1;
+            c = i;
             System.out.println(summer.toString());
             Thread.sleep(5000);
         }
@@ -1001,311 +979,328 @@ public class App {
         return output;
     }
 
-    public static int[][] floodFill(int[][] image, int sr, int sc, int color)  throws InterruptedException{
+    public static int[][] floodFill(int[][] image, int sr, int sc, int color) throws InterruptedException {
         int rowSize = image.length;
         int colSize = image[0].length;
-        int i=0,j=0,sr2=sr,sc2=sc;
+        int i = 0, j = 0, sr2 = sr, sc2 = sc;
 
         int firstBit = image[sr][sc];
 
-        Set<HashMap<Integer,Integer>> visitedd = new HashSet<>();
-        Set<HashMap<Integer,Integer>> coords = new HashSet<>();
-        Queue<HashMap<Integer,Integer>> u1 = new LinkedList<>();
-        
-       
-        HashMap<Integer,Integer> firstCoord = new HashMap<>(),coordCheck = new HashMap<>();
-        
+        Set<HashMap<Integer, Integer>> visitedd = new HashSet<>();
+        Set<HashMap<Integer, Integer>> coords = new HashSet<>();
+        Queue<HashMap<Integer, Integer>> u1 = new LinkedList<>();
+
+        HashMap<Integer, Integer> firstCoord = new HashMap<>(), coordCheck = new HashMap<>();
+
         firstCoord.put(sr2, sc2); // para comenzar el primer pop
 
         u1.add(firstCoord);
-        
-        while(u1.size()>0){
 
-            if(u1.size()==0){
+        while (u1.size() > 0) {
+
+            if (u1.size() == 0) {
                 break;
             }
 
-            /**Solo en posiciones intermedias de la matriz nxm iteramos arriba, izquierda, derecha y centro, sin alterar nuestra
+            /**
+             * Solo en posiciones intermedias de la matriz nxm iteramos arriba, izquierda,
+             * derecha y centro, sin alterar nuestra
              * coordenada inicial para el algoritmo BFS
-            */
+             */
             Iterator<Entry<Integer, Integer>> it = u1.peek().entrySet().iterator();
 
-            while(it.hasNext()){
-                Entry<Integer,Integer> valuex = it.next();
+            while (it.hasNext()) {
+                Entry<Integer, Integer> valuex = it.next();
 
-               // System.out.println(valuex.getKey()+"<>"+valuex.getValue());
+                // System.out.println(valuex.getKey()+"<>"+valuex.getValue());
 
                 sr2 = valuex.getKey();
                 sc2 = valuex.getValue();
 
                 break;
             }
-          //  sr2 = nextCoord.entry
-            //arriba
-            i = sr2-1;
+            // sr2 = nextCoord.entry
+            // arriba
+            i = sr2 - 1;
             j = sc2;
             coordCheck.put(i, j);
-            if((j<colSize && j >=0 && i < rowSize && i >=0) && !visitedd.contains(coordCheck)  && image[i][j] == firstBit){
-                HashMap<Integer,Integer> pivotAdd = new HashMap<>();
+            if ((j < colSize && j >= 0 && i < rowSize && i >= 0) && !visitedd.contains(coordCheck)
+                    && image[i][j] == firstBit) {
+                HashMap<Integer, Integer> pivotAdd = new HashMap<>();
                 pivotAdd.put(i, j);
                 coords.add(pivotAdd);
                 u1.add(pivotAdd);
-            }else{
-                HashMap<Integer,Integer> removal = new HashMap<>();
+            } else {
+                HashMap<Integer, Integer> removal = new HashMap<>();
                 removal.put(i, j);
                 visitedd.add(removal);
             }
 
             coordCheck.clear();
 
-            //izquierda
+            // izquierda
             i = sr2;
-            j = sc2-1;
+            j = sc2 - 1;
             coordCheck.put(i, j);
-            if((j<colSize && j >=0 && i < rowSize && i >=0) && !visitedd.contains(coordCheck) && image[i][j] == firstBit){
-                HashMap<Integer,Integer> pivotAdd = new HashMap<>();
+            if ((j < colSize && j >= 0 && i < rowSize && i >= 0) && !visitedd.contains(coordCheck)
+                    && image[i][j] == firstBit) {
+                HashMap<Integer, Integer> pivotAdd = new HashMap<>();
                 pivotAdd.put(i, j);
                 coords.add(pivotAdd);
                 u1.add(pivotAdd);
-            }else{
-                HashMap<Integer,Integer> removal = new HashMap<>();
+            } else {
+                HashMap<Integer, Integer> removal = new HashMap<>();
                 removal.put(i, j);
                 visitedd.add(removal);
             }
 
             coordCheck.clear();
 
-            //derecha
+            // derecha
             i = sr2;
-            j = sc2+1;
+            j = sc2 + 1;
             coordCheck.put(i, j);
-            if((j<colSize && j >=0 && i < rowSize && i >=0) && !visitedd.contains(coordCheck) && image[i][j] == firstBit){
-                HashMap<Integer,Integer> pivotAdd = new HashMap<>();
+            if ((j < colSize && j >= 0 && i < rowSize && i >= 0) && !visitedd.contains(coordCheck)
+                    && image[i][j] == firstBit) {
+                HashMap<Integer, Integer> pivotAdd = new HashMap<>();
                 pivotAdd.put(i, j);
                 coords.add(pivotAdd);
                 u1.add(pivotAdd);
-            }else{
-                HashMap<Integer,Integer> removal = new HashMap<>();
+            } else {
+                HashMap<Integer, Integer> removal = new HashMap<>();
                 removal.put(i, j);
                 visitedd.add(removal);
             }
 
             coordCheck.clear();
 
-            //abajo
-            i = sr2+1;
+            // abajo
+            i = sr2 + 1;
             j = sc2;
             coordCheck.put(i, j);
-            if((j<colSize && j >=0 && i < rowSize && i >=0) && !visitedd.contains(coordCheck) && image[i][j] == firstBit){
-                HashMap<Integer,Integer> pivotAdd = new HashMap<>();
+            if ((j < colSize && j >= 0 && i < rowSize && i >= 0) && !visitedd.contains(coordCheck)
+                    && image[i][j] == firstBit) {
+                HashMap<Integer, Integer> pivotAdd = new HashMap<>();
                 pivotAdd.put(i, j);
                 coords.add(pivotAdd);
                 u1.add(pivotAdd);
-            }else{
-                HashMap<Integer,Integer> removal = new HashMap<>();
+            } else {
+                HashMap<Integer, Integer> removal = new HashMap<>();
                 removal.put(i, j);
                 visitedd.add(removal);
             }
 
             coordCheck.clear();
 
-            HashMap<Integer,Integer> removal = new HashMap<>();
+            HashMap<Integer, Integer> removal = new HashMap<>();
             removal.put(sr2, sc2);
             visitedd.add(removal);
 
             image[sr2][sc2] = color;
-      
 
             u1.poll(); // ahora si remueve la cabeza y ve actualizando la cola
-           /* System.out.println("LA MATRIZ PERO CON EL SET DEBE TENER LAS MISMAS");
-            System.out.println(visitedd.toString());
-            System.out.println(coords.toString());
-            System.out.println(u1.toString());
-            Thread.sleep(3000); */
+            /*
+             * System.out.println("LA MATRIZ PERO CON EL SET DEBE TENER LAS MISMAS");
+             * System.out.println(visitedd.toString());
+             * System.out.println(coords.toString());
+             * System.out.println(u1.toString());
+             * Thread.sleep(3000);
+             */
 
         }
         return image;
     }
 
+    public static int numIslands(char[][] grid) throws InterruptedException {
+        Stack<HashMap<Integer, Integer>> temporal = new Stack<>();
+        Set<HashMap<Integer, Integer>> visited = new HashSet<>();
 
-    public static int numIslands(char[][] grid) throws InterruptedException{
-        Stack<HashMap<Integer,Integer>> temporal = new Stack<>();
-        Set<HashMap<Integer,Integer>> visited = new HashSet<>();
+        int i = 0, j = 0, rowSize = grid.length, colSize = grid[0].length, x = 0, y = 0, counter = 0;
+        int[] rowDirs = { -1, 0, 1, 0 }, colDirs = { 0, 1, 0, -1 };
 
-        int i=0,j=0,rowSize = grid.length,colSize=grid[0].length,x=0,y=0,counter=0;
-        int[] rowDirs = {-1,0,1,0},colDirs = {0,1,0,-1};
+        while (i < rowSize) {
 
-        while(i<rowSize){
-
-            while(j<colSize){
-                if(grid[i][j]!='0'){
-                 //   System.out.println("SIME DETECTA LÑOS UNOS NORMAL "+grid[i][j]);
-                    HashMap<Integer,Integer> coordPivot = new HashMap<>();
+            while (j < colSize) {
+                if (grid[i][j] != '0') {
+                    // System.out.println("SIME DETECTA LÑOS UNOS NORMAL "+grid[i][j]);
+                    HashMap<Integer, Integer> coordPivot = new HashMap<>();
                     coordPivot.put(i, j);
 
-                    if(!visited.contains(coordPivot)){
+                    if (!visited.contains(coordPivot)) {
                         temporal.add(coordPivot);
                         visited.add(coordPivot);
 
-                        while(temporal.size()>0){
-                       //     System.out.println("AQUI EMPIEZA ESTO "+temporal.toString()+"<>"+visited.toString());
-                            HashMap<Integer,Integer> stackPop= temporal.pop();
-                            Entry<Integer,Integer> firstCoord = stackPop.entrySet().stream().collect(Collectors.toList()).get(0);
+                        while (temporal.size() > 0) {
+                            // System.out.println("AQUI EMPIEZA ESTO
+                            // "+temporal.toString()+"<>"+visited.toString());
+                            HashMap<Integer, Integer> stackPop = temporal.pop();
+                            Entry<Integer, Integer> firstCoord = stackPop.entrySet().stream()
+                                    .collect(Collectors.toList()).get(0);
                             visited.add(stackPop);
-                          //  System.out.println();
-                        //    System.out.println(firstCoord.toString());
+                            // System.out.println();
+                            // System.out.println(firstCoord.toString());
                             for (int k = 0; k < colDirs.length; k++) {
-                                x = firstCoord.getKey()+rowDirs[k];
-                                y = firstCoord.getValue()+colDirs[k];
+                                x = firstCoord.getKey() + rowDirs[k];
+                                y = firstCoord.getValue() + colDirs[k];
 
-                                HashMap<Integer,Integer> coord = new HashMap<>();
-                                
-                          //      Thread.sleep(500);
-                                if(x< rowSize && x>=0 && y<colSize && y>=0 && grid[x][y] !='0'){
-                                 //   System.out.println("si lo inserta we ");
+                                HashMap<Integer, Integer> coord = new HashMap<>();
+
+                                // Thread.sleep(500);
+                                if (x < rowSize && x >= 0 && y < colSize && y >= 0 && grid[x][y] != '0') {
+                                    // System.out.println("si lo inserta we ");
                                     coord.put(x, y);
-                                    if(!visited.contains(coord)){
-                                //        System.out.println("coordenada "+x+"<>"+y);
+                                    if (!visited.contains(coord)) {
+                                        // System.out.println("coordenada "+x+"<>"+y);
                                         temporal.add(coord);
                                     }
-                                    
+
                                 }
                             }
 
                         }
 
-
-                     //   System.out.println("AQUI TERMINA ESTE PEDO WE "+visited.toString());
+                        // System.out.println("AQUI TERMINA ESTE PEDO WE "+visited.toString());
 
                         counter++;
                     }
-                  
+
                 }
 
-              //  System.out.println("AQUI RETOMA EL CICLO DE NUEVO");
+                // System.out.println("AQUI RETOMA EL CICLO DE NUEVO");
                 j++;
             }
-            j=0;
+            j = 0;
             i++;
         }
 
         return counter;
     }
 
-    public static int maxAreaOfIsland(int[][] grid) throws InterruptedException{
-        Stack<HashMap<Integer,Integer>> temporal = new Stack<>();
-        Set<HashMap<Integer,Integer>> visited = new HashSet<>();
+    public static int maxAreaOfIsland(int[][] grid) throws InterruptedException {
+        Stack<HashMap<Integer, Integer>> temporal = new Stack<>();
+        Set<HashMap<Integer, Integer>> visited = new HashSet<>();
 
-        int i=0,j=0,rowSize = grid.length,colSize=grid[0].length,x=0,y=0,counter=0,max=0;
-        int[] rowDirs = {-1,0,1,0},colDirs = {0,1,0,-1};
+        int i = 0, j = 0, rowSize = grid.length, colSize = grid[0].length, x = 0, y = 0, counter = 0, max = 0;
+        int[] rowDirs = { -1, 0, 1, 0 }, colDirs = { 0, 1, 0, -1 };
 
-        while(i<rowSize){
+        while (i < rowSize) {
 
-            while(j<colSize){
-                if(grid[i][j]!=0){
-                    HashMap<Integer,Integer> coordPivot = new HashMap<>();
+            while (j < colSize) {
+                if (grid[i][j] != 0) {
+                    HashMap<Integer, Integer> coordPivot = new HashMap<>();
                     coordPivot.put(i, j);
 
-                    if(!visited.contains(coordPivot)){
+                    if (!visited.contains(coordPivot)) {
                         temporal.add(coordPivot);
                         visited.add(coordPivot);
-                        //cache.add('a');
+                        // cache.add('a');
 
-                        while(temporal.size()>0){
-                            HashMap<Integer,Integer> stackPop= temporal.pop();
-                            
-                           if(!visited.contains(stackPop)){
+                        while (temporal.size() > 0) {
+                            HashMap<Integer, Integer> stackPop = temporal.pop();
+
+                            if (!visited.contains(stackPop)) {
                                 counter++;
-                           }
-                            Entry<Integer,Integer> firstCoord = stackPop.entrySet().stream().collect(Collectors.toList()).get(0);
+                            }
+                            Entry<Integer, Integer> firstCoord = stackPop.entrySet().stream()
+                                    .collect(Collectors.toList()).get(0);
                             visited.add(stackPop);
                             for (int k = 0; k < colDirs.length; k++) {
-                                x = firstCoord.getKey()+rowDirs[k];
-                                y = firstCoord.getValue()+colDirs[k];
+                                x = firstCoord.getKey() + rowDirs[k];
+                                y = firstCoord.getValue() + colDirs[k];
 
-                                HashMap<Integer,Integer> coord = new HashMap<>();
-                                
-                                if(x< rowSize && x>=0 && y<colSize && y>=0 && grid[x][y] !=0){
+                                HashMap<Integer, Integer> coord = new HashMap<>();
+
+                                if (x < rowSize && x >= 0 && y < colSize && y >= 0 && grid[x][y] != 0) {
                                     coord.put(x, y);
-                                    
-                                    if(!visited.contains(coord)){
+
+                                    if (!visited.contains(coord)) {
                                         temporal.add(coord);
                                     }
-                                    
+
                                 }
                             }
 
                         }
 
-                        max = Math.max(max, (counter+1));
+                        max = Math.max(max, (counter + 1));
                         counter = 0;
                     }
-                  
+
                 }
                 j++;
             }
-            j=0;
+            j = 0;
             i++;
         }
 
         return max;
     }
 
-    /*public static List<List<Integer>> subsetsWithDup(int[] nums) {
-        Set<List<Integer>> output = new HashSet<>();
-        int i=0,j=1;
+    /*
+     * public static List<List<Integer>> subsetsWithDup(int[] nums) {
+     * Set<List<Integer>> output = new HashSet<>();
+     * int i=0,j=1;
+     * 
+     * output.add(new ArrayList<>()); // se añade el vacio por regla
+     * List<Integer> mainPiv =
+     * Arrays.stream(nums).mapToObj(e->Integer.valueOf(e)).collect(Collectors.
+     * toCollection(ArrayList::new));
+     * Set<Integer> uniqueElements= new HashSet<>(mainPiv); //crea un set con
+     * elementos únicos
+     * output.add(mainPiv); //añade todo el arreglo como regla
+     * 
+     * Iterator<Integer> it = uniqueElements.iterator();
+     * 
+     * while(it.hasNext()){
+     * Integer pivot = it.next();
+     * // System.out.println(pivot);
+     * output.add(new ArrayList<>(Arrays.asList(pivot)));
+     * // output.add(new ArrayList<>(it.next()));
+     * }
+     * 
+     * // System.out.println(output.toString());
+     * 
+     * 
+     * 
+     * while(j<nums.length ){
+     * List<Integer> coords = new ArrayList<>();
+     * coords.add(nums[i]);
+     * coords.add(nums[j]);
+     * 
+     * output.add(coords);
+     * i++;
+     * j++;
+     * }
+     * 
+     * // System.out.println(output.toString());
+     * 
+     * List<List<Integer>> finalOutput =
+     * output.stream().collect(Collectors.toList());
+     * System.out.println(finalOutput.toString());
+     * 
+     * 
+     * 
+     * return finalOutput;
+     * }
+     */
 
-        output.add(new ArrayList<>()); // se añade el vacio por regla
-        List<Integer> mainPiv = Arrays.stream(nums).mapToObj(e->Integer.valueOf(e)).collect(Collectors.toCollection(ArrayList::new));
-        Set<Integer> uniqueElements= new HashSet<>(mainPiv); //crea un set con elementos únicos
-        output.add(mainPiv); //añade todo el arreglo como regla
+    /*
+     * public static List<List<Integer>> subsetsWithDup(int[] nums) throws
+     * InterruptedException {
+     * Set<List<Integer>> output = new LinkedHashSet<>();
+     * int i=0,j=0;
+     * 
+     * if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por
+     * regla
+     * 
+     * Queue<Integer> pivot =
+     * 
+     * return new ArrayList<>();
+     * 
+     * }
+     */
 
-        Iterator<Integer> it = uniqueElements.iterator();
-
-        while(it.hasNext()){
-            Integer pivot = it.next();
-          //  System.out.println(pivot);
-            output.add(new ArrayList<>(Arrays.asList(pivot)));
-          //  output.add(new ArrayList<>(it.next()));
-        }
-
-       // System.out.println(output.toString());
-        
-
-
-        while(j<nums.length ){
-            List<Integer> coords = new ArrayList<>();
-            coords.add(nums[i]);
-            coords.add(nums[j]);
-
-            output.add(coords);
-            i++;
-            j++;
-        }
-
-     //   System.out.println(output.toString());
-
-        List<List<Integer>> finalOutput = output.stream().collect(Collectors.toList());
-        System.out.println(finalOutput.toString());
-
-        
-
-        return finalOutput;
-    } */
-
-    /* public static List<List<Integer>> subsetsWithDup(int[] nums) throws InterruptedException {
-        Set<List<Integer>> output = new LinkedHashSet<>();
-        int i=0,j=0;
-
-        if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por regla
-
-        Queue<Integer> pivot = 
-
-        return new ArrayList<>();
-        
-    } */
-
-    public static List<List<Integer>> permute(int[] nums) throws InterruptedException{
+    public static List<List<Integer>> permute(int[] nums) throws InterruptedException {
         Queue<Integer> pivot = new LinkedList<>();
         Set<List<Integer>> output = new LinkedHashSet();
 
@@ -1316,29 +1311,29 @@ public class App {
             pivot.add(integer);
         }
 
-       
         List<Integer> checker = pivot.stream().collect(Collectors.toList());
         List<Integer> subChequer = new ArrayList<>();
-        
-        while(true){
-            
+
+        while (true) {
+
             output.add(new ArrayList<>(checker));
             subQueue.addAll(checker.subList(1, checker.size()));
 
-           /*  System.out.println(subQueue.toString()+"---");
-            Thread.sleep(3000); */
+            /*
+             * System.out.println(subQueue.toString()+"---");
+             * Thread.sleep(3000);
+             */
 
             subChequer.addAll(subQueue.stream().collect(Collectors.toList()));
-            int localPiv = checker.get(0); 
-            if(nums.length>2){
-                while(!subCombs.contains(subChequer)){
-                
+            int localPiv = checker.get(0);
+            if (nums.length > 2) {
+                while (!subCombs.contains(subChequer)) {
+
                     Queue<Integer> cache = new LinkedList<>();
                     int rotate = subQueue.poll();
                     subQueue.add(rotate);
-                    //subQueue.add(new ArrayList<>(subQueue));
+                    // subQueue.add(new ArrayList<>(subQueue));
                     subCombs.add(new ArrayList<>(subQueue));
-                    
 
                     cache.add(localPiv);
                     cache.addAll(new ArrayList<>(subQueue));
@@ -1359,7 +1354,7 @@ public class App {
             int rev = pivot.poll();
             pivot.add(rev);
             checker = pivot.stream().collect(Collectors.toList());
-            if(output.contains(checker)){
+            if (output.contains(checker)) {
                 break;
             }
             subChequer.clear();
@@ -1367,197 +1362,194 @@ public class App {
 
         }
 
-
         return output.stream().collect(Collectors.toList());
     }
 
-    /**fibonachi hecho a la improvisada, a pesar de que ya hay un codigo, lo mismo
+    /**
+     * fibonachi hecho a la improvisada, a pesar de que ya hay un codigo, lo mismo
      * sucede con esos casos de recursión como
      */
     public static int climbStairs(int n) throws InterruptedException {
         Queue<Integer> steps = new LinkedList();
         List<List<Integer>> stepFinal = new ArrayList();
-        int result = 0,counter=0,initialPiv=1;
+        int result = 0, counter = 0, initialPiv = 1;
 
-        while(counter<n){
-            System.out.println(result+"<>"+initialPiv);
-          //  result=initialPiv;
-           //if(result>=1){
-                counter++;
-            //}
+        while (counter < n) {
+            System.out.println(result + "<>" + initialPiv);
+            // result=initialPiv;
+            // if(result>=1){
+            counter++;
+            // }
             int aux = result;
-            result+=initialPiv;
-            if(result>=3){
-                initialPiv=aux;
+            result += initialPiv;
+            if (result >= 3) {
+                initialPiv = aux;
             }
-           // initialPiv++;
-       //    initialPiv=result;
-            
-           
+            // initialPiv++;
+            // initialPiv=result;
+
         }
         System.out.println(result);
-       // System.out.println(counter);
-      // System.out.println(initialPiv);
+        // System.out.println(counter);
+        // System.out.println(initialPiv);
 
         return counter;
     }
 
-    
-
     public static int fib(int n) {
-            if(n==0)
-        {
+        if (n == 0) {
             return 0;
-        }
-        else if(n==1)
-        {
+        } else if (n == 1) {
             return 1;
-        }
-        else
-        {
-            return fib(n-1)+fib(n-2);
+        } else {
+            return fib(n - 1) + fib(n - 2);
         }
     }
 
-    public static boolean canFinish(int numCourses, int[][] prerequisites) throws InterruptedException{
-        Map<Integer,ArrayList<Integer>> graphStructure = new LinkedHashMap<>();
+    public static boolean canFinish(int numCourses, int[][] prerequisites) throws InterruptedException {
+        Map<Integer, ArrayList<Integer>> graphStructure = new LinkedHashMap<>();
         Set<Integer> visited = new HashSet<>();
-        int c=0;
+        int c = 0;
         boolean result = true;
-        
-        if(prerequisites.length ==0) return true;
+
+        if (prerequisites.length == 0)
+            return true;
 
         for (int i = 0; i < prerequisites.length; i++) {
             int keyToInsert = prerequisites[i][0];
-            if(!graphStructure.containsKey(keyToInsert)){
+            if (!graphStructure.containsKey(keyToInsert)) {
                 ArrayList<Integer> pivot = new ArrayList<>();
                 pivot.add(prerequisites[i][1]);
                 graphStructure.put(keyToInsert, pivot);
-            }else{
+            } else {
                 ArrayList<Integer> pivot = graphStructure.get(keyToInsert);
                 pivot.add(prerequisites[i][1]);
                 graphStructure.put(keyToInsert, pivot);
             }
         }
 
-        /**AVAJO */
-        Iterator<Integer> keysIterator = graphStructure.keySet().iterator(); //vas a iteras los subn elementos de tu llave principal para buscarlos dentro del mismo hashmap
-
+        /** AVAJO */
+        Iterator<Integer> keysIterator = graphStructure.keySet().iterator(); // vas a iteras los subn elementos de tu
+                                                                             // llave principal para buscarlos dentro
+                                                                             // del mismo hashmap
 
         System.out.println(graphStructure.toString());
-        
-      //  Thread.sleep(10000);
+
+        // Thread.sleep(10000);
         Set<Integer> noCycleCache = new HashSet<>();
-        while(keysIterator.hasNext()){
-            int keyToSearch = keysIterator.next(); //[[1,0],[0,1]] tienes tu grafo armado
+        while (keysIterator.hasNext()) {
+            int keyToSearch = keysIterator.next(); // [[1,0],[0,1]] tienes tu grafo armado
 
             List<Integer> bfsSearchList = graphStructure.get(keyToSearch); // obtienes el [0] y buscas
 
-            if(bfsSearchList.contains(keyToSearch)){ //compruebas los casos de 5=[5]
-           //     System.out.println("ACA");
-                result = false; // aunque recorras todo el grafo, ya tienes un false aunque de match en el numero de cursos con el set
+            if (bfsSearchList.contains(keyToSearch)) { // compruebas los casos de 5=[5]
+                // System.out.println("ACA");
+                result = false; // aunque recorras todo el grafo, ya tienes un false aunque de match en el
+                                // numero de cursos con el set
             }
-            
-            
-            //comperuebas los nodos visitados para detectar ciclos
-            while(c<bfsSearchList.size()){
-                int vertexVisiting = bfsSearchList.get(c);  //1=[0,2,5,8...n] vas iterando el sub arreglo del hashmap
-                if(visited.contains(vertexVisiting)){ // 2 a 1, 1 a 0 y 0 a 2 que es el keyToSearch
-                    /*en este escenario, comprobar si al regresar está el direccionado */
-                    System.out.println(keyToSearch+","+vertexVisiting+"<<<<EN CUAL>>>");
-                    int recursivePivotKey = vertexVisiting; // 1 del 2,1
-                    if(graphStructure.containsKey(recursivePivotKey)){
 
-                        /**checar si el cache no tiene ya identificados flujos sin ciclos
+            // comperuebas los nodos visitados para detectar ciclos
+            while (c < bfsSearchList.size()) {
+                int vertexVisiting = bfsSearchList.get(c); // 1=[0,2,5,8...n] vas iterando el sub arreglo del hashmap
+                if (visited.contains(vertexVisiting)) { // 2 a 1, 1 a 0 y 0 a 2 que es el keyToSearch
+                    /* en este escenario, comprobar si al regresar está el direccionado */
+                    System.out.println(keyToSearch + "," + vertexVisiting + "<<<<EN CUAL>>>");
+                    int recursivePivotKey = vertexVisiting; // 1 del 2,1
+                    if (graphStructure.containsKey(recursivePivotKey)) {
+
+                        /**
+                         * checar si el cache no tiene ya identificados flujos sin ciclos
                          * para no iterar hacia atrás por cada nodo o(n)^2
                          */
 
-                        Queue<Integer> greedy = new LinkedList<>(graphStructure.get(recursivePivotKey)); //[0,3]
+                        Queue<Integer> greedy = new LinkedList<>(graphStructure.get(recursivePivotKey)); // [0,3]
 
-                        
-                        System.out.println(greedy.toString()+"antes de filtrar"+noCycleCache.toString());
-                       greedy = greedy.stream().filter(elem->!noCycleCache.contains(elem)).collect(Collectors.toCollection(LinkedList::new));
-                       noCycleCache.addAll(new LinkedList<>(greedy));
-                        System.out.println(greedy.toString()+"=="+noCycleCache.toString());
-                    //    Thread.sleep(1000);
+                        System.out.println(greedy.toString() + "antes de filtrar" + noCycleCache.toString());
+                        greedy = greedy.stream().filter(elem -> !noCycleCache.contains(elem))
+                                .collect(Collectors.toCollection(LinkedList::new));
+                        noCycleCache.addAll(new LinkedList<>(greedy));
+                        System.out.println(greedy.toString() + "==" + noCycleCache.toString());
+                        // Thread.sleep(1000);
 
-                        if(greedy.size() ==0 && noCycleCache.contains(recursivePivotKey)){
+                        if (greedy.size() == 0 && noCycleCache.contains(recursivePivotKey)) {
                             result = false;
                         }
-                        if(greedy.size()>0){
-                            while(visited.contains(recursivePivotKey) ){ // el visited en esta fase = //[0,1] para buscar el 1
-                                if(!greedy.contains(keyToSearch)){ //si el 1 no incluye el 2 del 2,1 en el 0,3
-                                    if(greedy.size()>=1){
+                        if (greedy.size() > 0) {
+                            while (visited.contains(recursivePivotKey)) { // el visited en esta fase = //[0,1] para
+                                                                          // buscar el 1
+                                if (!greedy.contains(keyToSearch)) { // si el 1 no incluye el 2 del 2,1 en el 0,3
+                                    if (greedy.size() >= 1) {
                                         recursivePivotKey = greedy.poll();
-                                        if(graphStructure.containsKey(recursivePivotKey)&& visited.contains(recursivePivotKey)){
+                                        if (graphStructure.containsKey(recursivePivotKey)
+                                                && visited.contains(recursivePivotKey)) {
                                             greedy.addAll(graphStructure.get(recursivePivotKey));
                                             noCycleCache.addAll(new LinkedList<>(greedy));
                                         }
-                                    }else{
+                                    } else {
                                         break;
                                     }
-                                }else{
+                                } else {
                                     result = false;
-                                
-                                    System.out.println(keyToSearch+","+vertexVisiting+"<<<<SI DETECTA EL CIRCULAR>>>"+visited.toString());
+
+                                    System.out.println(keyToSearch + "," + vertexVisiting
+                                            + "<<<<SI DETECTA EL CIRCULAR>>>" + visited.toString());
                                     break;
                                 }
                             }
                         }
                         noCycleCache.add(keyToSearch);
-                       
+
                     }
 
-                    
-                    
-                } 
-                
+                }
+
                 List<Integer> adjancList = graphStructure.get(vertexVisiting);
 
-                if(adjancList!=null){
-                    if(adjancList.contains(keyToSearch)){
+                if (adjancList != null) {
+                    if (adjancList.contains(keyToSearch)) {
                         result = false;
                         break;
                     }
-                }else{
+                } else {
                     visited.add(vertexVisiting);
                 }
-                
+
                 c++;
             }
 
             visited.add(keyToSearch);
 
-            if(!result){
+            if (!result) {
                 break;
             }
 
-            System.out.println(visited.toString()+"<>"+result+"<>");
+            System.out.println(visited.toString() + "<>" + result + "<>");
 
-            c=0;
+            c = 0;
         }
 
-        return visited.size() <= numCourses && result ? true:false;
+        return visited.size() <= numCourses && result ? true : false;
     }
-    
 
+    public static int numberOfNeighbours(char pivot, char[][] grid, HashMap<Integer, Integer> actualCoordMap, int[] x,
+            int[] y) {
 
-    public static int numberOfNeighbours(char pivot,char[][] grid,HashMap<Integer,Integer> actualCoordMap,int[] x,int[] y){
-
-        /**Función auxiliar para saber el número de vecinos previo a colocar una coordenada
+        /**
+         * Función auxiliar para saber el número de vecinos previo a colocar una
+         * coordenada
          * en la pila de DFS, esto me hace pensar que para easte ´problema capaz
          * el BFS es más adecuado. Aunque el problema en leetcode da a pie
          * que se usan ambos.
          */
         int numberOfNeighbours = 0;
 
-        Entry<Integer,Integer> actualCoord = actualCoordMap.entrySet().iterator().next();
+        Entry<Integer, Integer> actualCoord = actualCoordMap.entrySet().iterator().next();
         for (int i = 0; i < x.length; i++) {
-            int xCord = actualCoord.getKey()+x[i];
-            int yCord = actualCoord.getValue()+y[i];
+            int xCord = actualCoord.getKey() + x[i];
+            int yCord = actualCoord.getValue() + y[i];
 
-            if(xCord>=0 && xCord<grid.length && yCord >=0 && yCord <grid[0].length){
-                if(grid[xCord][yCord] == pivot){
+            if (xCord >= 0 && xCord < grid.length && yCord >= 0 && yCord < grid[0].length) {
+                if (grid[xCord][yCord] == pivot) {
                     numberOfNeighbours++;
                 }
             }
@@ -1566,180 +1558,321 @@ public class App {
 
         return numberOfNeighbours;
     }
-    public static boolean containsCycle(char[][] grid) throws InterruptedException{
-        /**PRIMERO IMPLEMENTAR BFS Y DE AHÍ AGARRAR UN DFS */
 
-        Set<HashMap<Integer,Integer>> visitedCoords=new HashSet<>(); //no usarlo en testcases gigantes!!
-        /**ALGO MUY INTERESANTE QUE ACABO DE CHECAR ES QUE, ES MÁS RÁPIDO
+    public static boolean containsCycle(char[][] grid) throws InterruptedException {
+        /** PRIMERO IMPLEMENTAR BFS Y DE AHÍ AGARRAR UN DFS */
+
+        Set<HashMap<Integer, Integer>> visitedCoords = new HashSet<>(); // no usarlo en testcases gigantes!!
+        /**
+         * ALGO MUY INTERESANTE QUE ACABO DE CHECAR ES QUE, ES MÁS RÁPIDO
          * EL ALGORITMO PONIENDO LOS VISITED SOBRE UNA MATRIZ DEL MISMO TAMAÑO
          * QUE SOBRE UN HASHMAP QUE EN TEORIA ES MÁS RAPIDO.
          * 
          * lOGICO PUESTO QUE ES DE VELOCIDAD MÁS INSTANTANEA
          * 
-         * lo cual me hizo perder tiempo de debugging extra sobre algo que ya funcionaba bien
-         * importante profundizar sobre las velocidades en arreglos lineales e instantaneos, obvio
+         * lo cual me hizo perder tiempo de debugging extra sobre algo que ya funcionaba
+         * bien
+         * importante profundizar sobre las velocidades en arreglos lineales e
+         * instantaneos, obvio
          * algo indexado explicitamente tiene mas velocidad que un hashcode!!!!
          * 
          */
 
-        int [][] visited = new int[grid.length][grid[0].length];
-        Stack<HashMap<Integer,Integer>> dfsLookup = new Stack<>();
-   //     int hasherEncoder = grid.length*grid[0].length;
+        int[][] visited = new int[grid.length][grid[0].length];
+        Stack<HashMap<Integer, Integer>> dfsLookup = new Stack<>();
+        // int hasherEncoder = grid.length*grid[0].length;
 
         Stack<Integer> dfsLookupV2 = new Stack<>();
 
-        int[] x = {-1,0,0,1};
-        int[] y = {0,-1,1,0};
+        int[] x = { -1, 0, 0, 1 };
+        int[] y = { 0, -1, 1, 0 };
 
-        HashMap<Integer,Integer> adder = new HashMap<>();
+        HashMap<Integer, Integer> adder = new HashMap<>();
         int[] adderv2 = new int[2];
 
-        int i=0,j=0,cycleCounter=0,h=0,z=0;
+        int i = 0, j = 0, cycleCounter = 0, h = 0, z = 0;
 
         int minimumCycle = 0;
 
         char patternLookup = '0';
-        
-        while (h<grid.length) {
-            
-            while(z<grid[0].length){
-              
-                patternLookup = grid[h][z];  // de acuerdo a la letra identificada veremos que es lo que resulta
+
+        while (h < grid.length) {
+
+            while (z < grid[0].length) {
+
+                patternLookup = grid[h][z]; // de acuerdo a la letra identificada veremos que es lo que resulta
 
                 adder.clear();
                 adder.put(h, z);
 
-                adderv2[0]=h;
-                adderv2[1]=z;
-                
+                adderv2[0] = h;
+                adderv2[1] = z;
+
                 int numberOfNeighbours = numberOfNeighbours(patternLookup, grid, adder, x, y);
-        //        System.out.println(numberOfNeighbours+" cuantos tiene");
+                // System.out.println(numberOfNeighbours+" cuantos tiene");
 
+                if (/* !visitedCoords.contains(new HashMap<>(adder)) */ visited[h][z] != 1 && numberOfNeighbours >= 2) {
+                    // System.out.println(adder.toString()+" que cordenada andas iterando, para la
+                    // letra "+patternLookup);
 
-                if(/* !visitedCoords.contains(new HashMap<>(adder)) */ visited[h][z] !=1 && numberOfNeighbours>=2){
-          //          System.out.println(adder.toString()+" que cordenada andas iterando, para la letra "+patternLookup);
-
-                    dfsLookupV2.add(((h*grid[0].length)+z)); // añadelo por lista y es más rapidin
-                    dfsLookupV2.add(((h*grid[0].length)+z));
-//                    dfsLookup.add(new HashMap<>(adder));
-  //                  dfsLookup.add(new HashMap<>(adder));
+                    dfsLookupV2.add(((h * grid[0].length) + z)); // añadelo por lista y es más rapidin
+                    dfsLookupV2.add(((h * grid[0].length) + z));
+                    // dfsLookup.add(new HashMap<>(adder));
+                    // dfsLookup.add(new HashMap<>(adder));
 
                     visited[h][z] = 1;
-                   // visitedCoords.add(new HashMap<>(adder));
+                    // visitedCoords.add(new HashMap<>(adder));
 
-                    // si la coordenada no ha sido utilizada en algún dfs previo, continua, es irrelevante comprobar por letra, es por coordenada.
+                    // si la coordenada no ha sido utilizada en algún dfs previo, continua, es
+                    // irrelevante comprobar por letra, es por coordenada.
 
-                    /*Mientras la pila esté llena, implementa el dfs a partir del punto identificado durante 
-                    la matriz */
-                    while(dfsLookupV2.size()>0){
+                    /*
+                     * Mientras la pila esté llena, implementa el dfs a partir del punto
+                     * identificado durante
+                     * la matriz
+                     */
+                    while (dfsLookupV2.size() > 0) {
 
-                //        Entry<Integer,Integer> coordObtainerPivot = dfsLookup.pop().entrySet().iterator().next(); // obten el primer elemento de la pila, y obten la coordenada sin usar llave
+                        // Entry<Integer,Integer> coordObtainerPivot =
+                        // dfsLookup.pop().entrySet().iterator().next(); // obten el primer elemento de
+                        // la pila, y obten la coordenada sin usar llave
 
                         int coordObtainerx = dfsLookupV2.pop();
 
-                        i=coordObtainerx / grid[0].length;
-                        j=coordObtainerx % grid[0].length;
-                        
-                     //   i=coordObtainerPivot.getKey(); j=coordObtainerPivot.getValue();
-                     //   adder.clear();
-                        adderv2=new int[2];
-                      //  adder.put(i, j); // el visited siempre del nodo que estás recorriendo al final we
-                      
-                        
-                       // visitedCoords.add(new HashMap<>(adder));
+                        i = coordObtainerx / grid[0].length;
+                        j = coordObtainerx % grid[0].length;
+
+                        // i=coordObtainerPivot.getKey(); j=coordObtainerPivot.getValue();
+                        // adder.clear();
+                        adderv2 = new int[2];
+                        // adder.put(i, j); // el visited siempre del nodo que estás recorriendo al
+                        // final we
+
+                        // visitedCoords.add(new HashMap<>(adder));
                         visited[i][j] = 1;
-                        
+
                         for (int k = 0; k < y.length; k++) {
 
-                             adderv2=new int[2];
-                            
-                            /**Calcula las 4 direcciones de la coordenada */
-                            int xCord = i+x[k];
+                            adderv2 = new int[2];
 
-                            int yCord = j+y[k];
+                            /** Calcula las 4 direcciones de la coordenada */
+                            int xCord = i + x[k];
 
-                           /**SIGNIFICA QUE ES UNA COORDENADA VALIDA */
+                            int yCord = j + y[k];
 
-                            if(xCord>=0 && xCord<grid.length && yCord >=0 && yCord <grid[0].length){
+                            /** SIGNIFICA QUE ES UNA COORDENADA VALIDA */
 
-                                if(grid[xCord][yCord] == patternLookup){ // si el vecino es igual a la lñetra que estamos buscando men...
-                                 //   adder.put(xCord, yCord);// procesamos la coordenada como dupla para procesarlo más facil
+                            if (xCord >= 0 && xCord < grid.length && yCord >= 0 && yCord < grid[0].length) {
 
-                                    if(visited[xCord][yCord]!=1){ // ... y si no está en el arreglo de visitados
+                                if (grid[xCord][yCord] == patternLookup) { // si el vecino es igual a la lñetra que
+                                                                           // estamos buscando men...
+                                    // adder.put(xCord, yCord);// procesamos la coordenada como dupla para
+                                    // procesarlo más facil
 
-                                        if(dfsLookupV2.contains((xCord*grid[0].length)+yCord)){
+                                    if (visited[xCord][yCord] != 1) { // ... y si no está en el arreglo de visitados
+
+                                        if (dfsLookupV2.contains((xCord * grid[0].length) + yCord)) {
                                             cycleCounter++;
                                         }
 
-                                       // dfsLookup.add(new HashMap<>(adder)); // añadelo a la pila duiramte la iteración del for we, la coordenada vecina a la pila
-                                       dfsLookupV2.add((xCord*grid[0].length)+yCord);
+                                        // dfsLookup.add(new HashMap<>(adder)); // añadelo a la pila duiramte la
+                                        // iteración del for we, la coordenada vecina a la pila
+                                        dfsLookupV2.add((xCord * grid[0].length) + yCord);
                                         minimumCycle++;
-                                        
+
                                     }
                                 }
 
                             }
-                        }    
-                        
-                 //       adder.clear();
-                        adderv2=new int[2];
- 
-                   //     System.out.println(dfsLookupV2.toString()+" como es el estado de la pila después de iterar");
-                     //   Thread.sleep(100); 
+                        }
+
+                        // adder.clear();
+                        adderv2 = new int[2];
+
+                        // System.out.println(dfsLookupV2.toString()+" como es el estado de la pila
+                        // después de iterar");
+                        // Thread.sleep(100);
                     }
 
-      //              System.out.println(minimumCycle+" minimum cycle");
-
+                    // System.out.println(minimumCycle+" minimum cycle");
 
                 }
                 z++;
                 minimumCycle = 0;
             }
-          //  minimumCycle = 0;
-            z=0;
+            // minimumCycle = 0;
+            z = 0;
             h++;
         }
-        
 
         System.out.println(cycleCounter);
 
-        return cycleCounter>0 ? true : false;
+        return cycleCounter > 0 ? true : false;
     }
 
+    // target = 7, nums = [2,3,1,2,4,3]
+    public static int minSubArrayLen(int target, int[] nums) throws InterruptedException {
+        int izq = 0, der = 0, size = nums.length;
+        // System.out.println(size);
+        int arrLength = Integer.MAX_VALUE, sumAdding = 0;
+        while (izq < size && der < size) {
+            /** Si vas a iterar a la derecha */
+
+            while (der < size && der >= izq) {
+                sumAdding += nums[der];
+
+                if (sumAdding >= target) {
+                    System.out.println("DESDE LA PRIMERA " + izq + "<>" + der + "=" + sumAdding);
+                    while (izq < size && izq <= der) {
+                        sumAdding -= nums[izq];
+                        if (sumAdding <= target) {
+                            izq++;
+                            System.out.println("DESDE LA segunda " + izq + "<>" + der + "=" + sumAdding);
+                            break;
+                        }
+
+                        izq++;
+                    }
+                }
+
+                der++;
+            }
+
+            // izq++;
+            Thread.sleep(100);
+        }
+
+        return arrLength == Integer.MAX_VALUE ? 0 : arrLength;
+    }
+
+    public static int[] maxSlidingWindow(int[] nums, int k) throws InterruptedException {
+        long start = System.currentTimeMillis();
+        int[] maxResultsPerCycle = new int[nums.length-k +1];
+
+        int i = 0, j = 0, maxValuePerWindow = Integer.MIN_VALUE, arrIndex = 0;
+
+        List<Integer> window = new LinkedList<>();
+        List<Integer> sorterHelper = new ArrayList<>();
+
+        if (k > nums.length) {
+            return maxResultsPerCycle; // devolver vacio para este test case
+        }
+
+        for (int l = 0; l < k; l++) {
+            // System.out.println(nums[l]);
+            window.add(nums[l]);
+            sorterHelper.add(nums[l]);
+        }
+
+        Collections.sort(sorterHelper, Comparator.reverseOrder());
+        /** Ahora implementa una búsqueda binaria en esta madre */
+        maxValuePerWindow = sorterHelper.get(0);
+    //    System.out.println(maxValuePerWindow);
+    //    System.out.println("EL ARREGLO ORIGINAL " + window.toString());
+        // Thread.sleep(10000);
+        j = k - 1; // para el calculo de la ventana
+        maxResultsPerCycle[arrIndex] = maxValuePerWindow; // haz la primera inserción en el arreglo
+        arrIndex++;
+        /** Mientras el tope de tu ventana no toque el tope del arreglo principal */
+        while (j < nums.length) {
+            sorterHelper.clear(); // limpia el arreglo
+            window.remove(0);
+            i++;
+            j++;
+            
+            if(j>=nums.length)break;
+
+            System.out.println(nums[i]+"<>"+nums[j]+"<>"+maxValuePerWindow+"<>"+ (nums[j]>=maxValuePerWindow));
+            window.add(nums[j]);
+           /*  System.out.println(i + "++" + j);
+            System.out.println(nums[i]+"<<"+nums[j]);
+            System.out.println(window.toString()); */
+             if(nums[j]>= maxValuePerWindow){
+                maxValuePerWindow = nums[j];
+                 
+            }
+ 
+/*              sorterHelper.addAll(window);
+            Collections.sort(sorterHelper, Comparator.reverseOrder());
+            maxValuePerWindow = sorterHelper.get(0); */
+            //System.out.println(maxValuePerWindow);
+
+            maxResultsPerCycle[arrIndex] = maxValuePerWindow;
+            arrIndex++;
+        }
+
+        long end = System.currentTimeMillis();
+
+     // maxResultsPerCycle = Arrays.stream(maxResultsPerCycle,0,arrIndex).toArray();
+/*        for (int integer : maxResultsPerCycle) {
+            System.out.println(integer);
+      } */
+ 
+        System.out.println("Tiempo de ejecución "+(end-start));
+
+        return maxResultsPerCycle;
+    }
+
+    /* Del pdf llevo dia 1, 2, 4,8 */
+
     public static void main(String[] args) throws InterruptedException {
-//prueba();
-
-     //  char[][] cycles = {{'a','a','a','a'},{'a','b','b','a'},{'a','b','b','a'},{'a','a','a','a'}};
-
-       char[][] cycles = {{'c','c','c','a'},{'c','d','c','c'},{'c','c','e','c'},{'f','c','c','c'}};
-
-   /*   char [][] cycles = {{'a','a','a'},
-                        {'a','a','a'},
-                        {'a','b','a'},
-                        {'b','a','b'},
-                        {'a','b','a'}}; */
-
-/*          char[][] cycles = {{'c','a','d'},
-                        {'a','a','a'},
-                        {'a','a','d'},
-                        {'a','c','d'},
-                        {'a','b','c'}};   
+      /*   int[] numss = { 1, 3, -1, -3, 5, 3, 6, 7 };
+        int k = 3;
  */
-    
-        System.out.println(containsCycle(cycles));
-     //   int [][] graphs={{0,10},{3,18},{5,5},{6,11},{11,14},{13,1},{15,1},{17,4}};
-       // int[][] graphs = {{1,4},{2,4},{3,1},{3,2}}; //mal debe ser true
+        int[] numss = {7157,9172,7262,-9146,3087,5117,4046,7726,-1071,6011,5444,-48,-1385,-7328,3255,1600,586,-5160,-371,-5978,9837,3255,-6137,8587,-3403,9775,260,6016,9797,3371,2395,6851,2349,-7019,9318,1211,-3110,8735,-7507,1784,7400,-5799,3169,-7696,-8991,-2222,-9434,-4490,4034,-831,-9656,5488,-4395,9339,4104,-9058,-4072,-1172,1758,6878,-5570,-6380,9550,-9389,1411,2298,3516,551,9196,5215,-237,-4146,1682,4418,-4639,7759,9593,-9588,3041,9208,-7331,-797,-2529,7738,-2944,4351,5091,-9448,-5404,6200,-1425,-3983,678,8456,-8085,5162,7165,4692,-494,-9249,8514,521,-8835,6745,-5775,-575,1876,-5464,5053,5567,3456,5873,1965,4316,2126,9462,-59,6544,-1547,7015,-8928,-3903,-3020,5865,-9479,6723,9214,5705,5136,7725,945,-1995,-2288,4579,7103,9938,4495,-730,-3180,7717,6824,794,-894,-1439,-1641,-4577,9362,-8817,-6035,-7980,-1278,-1928,-5390,-2342,1189,-2340,4788,-1814,5927,3115,9017,6801,7884,-5719,5992,7477,-486,-2734,-1557,3169,5288,-8295,-5651,2491,-3394,8302,-8822,5638,7654,7350,9884,-5392,881,-4874,5582,8309,-8514,2682,-6081,5602,4963,3538,9558,-6401,-2641,6223,-7107,-2772,5873,78,-7934,-7641,7872,7901,7436,-3815,-1540,-3387,3558,-8030,-6637,9609,8594,83,7984,-3286,7211,5877,-8655,6700,9855,-7521,903,1024,4051,4044,4044,8650,-2932,-134,-8167,-5338,-1014,391,1913,-9914,-9100,7108,-9250,1705,5615,641,6809,6619,7782,9062,3030,603,-2528,-5493,-1237,8428,1231,6701,202,641,-5351,-5366,-3347,7659,-3953,5518,1575,-3514,999,-6631,-934,-1119,1749,-9533,-8528,-9425,-9138,-6498,-1546,-8501,7668,-8135,-6234,7236,1722,-7690,7339,-5205,698,3680,7741,-9067,8739,-7658,-2518,3967,-128,620,-4571,780,5989,-6220,-1932,6629,-733,-6978,-68,-3295,9075,-297,7648,-7645,2301,-4641,-8443,6935,-6257,7067,-9046,5474,6833,6924,8516,-213,-9210,-9605,-5798,4710,-9258,-7736,944,5194,-7465,5978,-6840,3735,4392,9218,-5571,2944,-5864,2995,-5234,5036,-4999,-9883,5493,4646,9574,3528,291,-4799,-3099,7639,5144,-2560,-7573,433,2464,-3484,4673,3283,-6459,-1194,8122,7314,-3389,-1899,8362,-1046,-1751,-2140,7642,-6274,-8056,3925,-397,1641,5762,8099,-9683,2533,1333,3295,7413,-8538,-8585,8412,1958,-8487,7248,4987,-6079,9427,-6207,-7873,688,224,6792,-4150,3345,826,1885,6463,-5269,3068,9649,-1354,3159,4975,514,-3071,-4355,-1615,9427,8343,978,7914,-1876,1160,-898,-8431,6245,8760,8514,9857,9505,-3602,-4124,-4124,209,855,-253,-7232,-7598,6813,-565,-8739,2886,3289,-4339,7846,-3820,3001,-3235,-3146,-2535,-1444,8976,-8434,8190,-4185,5847,-1020,-6020,-3935,-4267,2030,6882,-7707,-5213,5284,-2061,-325,2911,2346,1080,-2111,-4929,-9101,1548,-4817,-7526,2688,-3589,-4414,6269,-1423,-6735,-7204,-6624,-7561,7775,-2650,-6843,735,3824,4592,-5199,-1922,1757,5662,-1272,4208,400,2883,720,9179,1056,3310,-7095,-3834,-2683,4422,-2599,-6124,1449,-5001,-5874,-7396,9158,2926,4281,-9423,8492,-1542,1197,6023,-9627,4970,28,7002,5204,5292,3901,4640,2994,-4487,-2102,-4481,-5347,1164,6773,6277,5759,-4250,-3920,4843,7763,-791,8478,-7750,7243,-4640,6252,8699,2001,9799,-5555,-3183,-6124,4787,1378,-4618,3349,-5561,-2392,-1764,9774,-5698,1775,-9616,-6353,-3622,-4907,1356,5728,-1902,-3203,5268,4414,1096,-1268,-940,179,-7824,9845,6093,9096,-163,3713,-297,6100,6544,6167,6209,-5476,4519,6391,289,1823,7256,5528,9069,-4861,2571,-5339,2657,-1383,-3771,-4709,-1915,-8712,-816,2266,-8078,-2451,-6189,-5910,-8027,4915,-5900,-2979,2028,4015,-2885,8665,3121,8692,-2479,-2824,-5047,-3116,-5621,-7248,-1462,1114,-907,5481,6605,8767,-506,3412,-7848,7333,-634,3219,-3273,3031,-1867,1765,1522,-7747,-7195,-9110,6320,-3756,5207,1190,6370,-3143,6745,-2833,1926,-985,-3126,-9019,9744,-9202,8817,-3722,-2002,8111,4457,4973,4275,7125,3828,-3613,-3104,6544,6764,6585,-4240,-3961,-2756,-5445,-1143,-9788,-6964,3690,-1158,-6795,9726,7048,8414,-4774,8405,-8837,3163,-9265,877,-6371,-5901,5427,243,-8247,-2653,-2356,-1228,-3403,-9628,4430,1937,-8435,3876,-9615,-1366,-8793,2136,496,3957,-1316,822,7134,-8320,-8789,-33,1803,-2617,4625,-4334,-46,6870,-9895,-3381,-6536,7742,6356,-1725,2283,-2267,532,-3571,4288,-40,4714,2145,-8173,-9782,-2821,8418,7097,-7187,-2945,830,-1110,7886,-821,-3453,-4313,-7945,7020,-2473,-4510,4867,-1992,3770,1031,6714,9721,-1399,-5297,-3545,-767,-2432,-8088,-6801,1689,7271,673,9178,7565,8263,-213,6693,843,940,9793,7536,-1742,266,9280,-402,8335,5091,-3019,-3904,-6956,-7393,1053,9830,-403,6191,7652,-5990,-7726,741,-7996,-3664,-5601,9598,6603,3714,8336,5228,-3757,7069,-371,-9984,2625,-5485,-14,8394,7757,4705,-5743,-3141,6589,8246,7689,5709,9201,9740,-5969,-3092,-5806,-1012,-7508,-9508,-9229,-6246,-5063,-8889,-4678,-7761,-4711,3076,-2699,224};
+        int k = 45;
+        System.out.println(maxSlidingWindow(numss, k));
+        // target = 7, nums = [2,3,1,2,4,3]
+        /*
+         * int [] numsx = {2,3,1,2,4,3};
+         * 
+         * int targeting = 7;
+         * 
+         * System.out.println(minSubArrayLen(targeting, numsx));
+         */
+        // prueba();
 
-   //   int[][] graphs = {{1,0},{2,1},{3,2},{1,3}};
+        // char[][] cycles =
+        // {{'a','a','a','a'},{'a','b','b','a'},{'a','b','b','a'},{'a','a','a','a'}};
+        /*
+         * char[][] cycles = { { 'c', 'c', 'c', 'a' }, { 'c', 'd', 'c', 'c' }, { 'c',
+         * 'c', 'e', 'c' },
+         * { 'f', 'c', 'c', 'c' } };
+         */
 
-      //  int [][] graphs={{1,0},{0,2},{2,1}};
-    //   int[][] graphs = {{1,0},{2,0},{2,1},{3,1},{3,2},{4,2},{4,3},{5,3},{5,4},{6,4},{6,5},{7,5},{7,6},{8,6},{8,7},{9,7},{9,8},{10,8},{10,9},{11,9},{11,10},{12,10},{12,11},{13,11},{13,12},{14,12},{14,13},{15,13},{15,14},{16,14},{16,15},{17,15},{17,16},{18,16},{18,17},{19,17},{19,18},{20,18},{20,19},{21,19},{21,20},{22,20},{22,21},{23,21},{23,22},{24,22},{24,23},{25,23},{25,24},{26,24},{26,25},{27,25},{27,26},{28,26},{28,27},{29,27},{29,28},{30,28},{30,29},{31,29},{31,30},{32,30},{32,31},{33,31},{33,32},{34,32},{34,33},{35,33},{35,34},{36,34},{36,35},{37,35},{37,36},{38,36},{38,37},{39,37},{39,38},{40,38},{40,39},{41,39},{41,40},{42,40},{42,41},{43,41},{43,42},{44,42},{44,43},{45,43},{45,44},{46,44},{46,45},{47,45},{47,46},{48,46},{48,47},{49,47},{49,48},{50,48},{50,49},{51,49},{51,50},{52,50},{52,51},{53,51},{53,52},{54,52},{54,53},{55,53},{55,54},{56,54},{56,55},{57,55},{57,56},{58,56},{58,57},{59,57},{59,58},{60,58},{60,59},{61,59},{61,60},{62,60},{62,61},{63,61},{63,62},{64,62},{64,63},{65,63},{65,64},{66,64},{66,65},{67,65},{67,66},{68,66},{68,67},{69,67},{69,68},{70,68},{70,69},{71,69},{71,70},{72,70},{72,71},{73,71},{73,72},{74,72},{74,73},{75,73},{75,74},{76,74},{76,75},{77,75},{77,76},{78,76},{78,77},{79,77},{79,78},{80,78},{80,79},{81,79},{81,80},{82,80},{82,81},{83,81},{83,82},{84,82},{84,83},{85,83},{85,84},{86,84},{86,85},{87,85},{87,86},{88,86},{88,87},{89,87},{89,88},{90,88},{90,89},{91,89},{91,90},{92,90},{92,91},{93,91},{93,92},{94,92},{94,93},{95,93},{95,94},{96,94},{96,95},{97,95},{97,96},{98,96},{98,97},{99,97}};
-  //  int[][] graphs = {{0,1},{2,3},{1,2},{3,0}};    
-    //int [][] graphs={{1,0},{0,1}};
-   // System.out.println(canFinish(4, graphs));
+        /*
+         * char [][] cycles = {{'a','a','a'},
+         * {'a','a','a'},
+         * {'a','b','a'},
+         * {'b','a','b'},
+         * {'a','b','a'}};
+         */
 
-      /*   System.out.println("Hello World!");
-        System.out.println("ESCALERA reves "+fib(3)); */
+        /*
+         * char[][] cycles = {{'c','a','d'},
+         * {'a','a','a'},
+         * {'a','a','d'},
+         * {'a','c','d'},
+         * {'a','b','c'}};
+         */
+
+        // System.out.println(containsCycle(cycles));
+        // int [][] graphs={{0,10},{3,18},{5,5},{6,11},{11,14},{13,1},{15,1},{17,4}};
+        // int[][] graphs = {{1,4},{2,4},{3,1},{3,2}}; //mal debe ser true
+
+        // int[][] graphs = {{1,0},{2,1},{3,2},{1,3}};
+
+        // int [][] graphs={{1,0},{0,2},{2,1}};
+        // int[][] graphs =
+        // {{1,0},{2,0},{2,1},{3,1},{3,2},{4,2},{4,3},{5,3},{5,4},{6,4},{6,5},{7,5},{7,6},{8,6},{8,7},{9,7},{9,8},{10,8},{10,9},{11,9},{11,10},{12,10},{12,11},{13,11},{13,12},{14,12},{14,13},{15,13},{15,14},{16,14},{16,15},{17,15},{17,16},{18,16},{18,17},{19,17},{19,18},{20,18},{20,19},{21,19},{21,20},{22,20},{22,21},{23,21},{23,22},{24,22},{24,23},{25,23},{25,24},{26,24},{26,25},{27,25},{27,26},{28,26},{28,27},{29,27},{29,28},{30,28},{30,29},{31,29},{31,30},{32,30},{32,31},{33,31},{33,32},{34,32},{34,33},{35,33},{35,34},{36,34},{36,35},{37,35},{37,36},{38,36},{38,37},{39,37},{39,38},{40,38},{40,39},{41,39},{41,40},{42,40},{42,41},{43,41},{43,42},{44,42},{44,43},{45,43},{45,44},{46,44},{46,45},{47,45},{47,46},{48,46},{48,47},{49,47},{49,48},{50,48},{50,49},{51,49},{51,50},{52,50},{52,51},{53,51},{53,52},{54,52},{54,53},{55,53},{55,54},{56,54},{56,55},{57,55},{57,56},{58,56},{58,57},{59,57},{59,58},{60,58},{60,59},{61,59},{61,60},{62,60},{62,61},{63,61},{63,62},{64,62},{64,63},{65,63},{65,64},{66,64},{66,65},{67,65},{67,66},{68,66},{68,67},{69,67},{69,68},{70,68},{70,69},{71,69},{71,70},{72,70},{72,71},{73,71},{73,72},{74,72},{74,73},{75,73},{75,74},{76,74},{76,75},{77,75},{77,76},{78,76},{78,77},{79,77},{79,78},{80,78},{80,79},{81,79},{81,80},{82,80},{82,81},{83,81},{83,82},{84,82},{84,83},{85,83},{85,84},{86,84},{86,85},{87,85},{87,86},{88,86},{88,87},{89,87},{89,88},{90,88},{90,89},{91,89},{91,90},{92,90},{92,91},{93,91},{93,92},{94,92},{94,93},{95,93},{95,94},{96,94},{96,95},{97,95},{97,96},{98,96},{98,97},{99,97}};
+        // int[][] graphs = {{0,1},{2,3},{1,2},{3,0}};
+        // int [][] graphs={{1,0},{0,1}};
+        // System.out.println(canFinish(4, graphs));
+
+        /*
+         * System.out.println("Hello World!");
+         * System.out.println("ESCALERA reves "+fib(3));
+         */
 
         /*
          * int[][] prueba = { {1,2,3,4},{5,6,7,8}qr ,{9,10,11,12}};
@@ -1785,12 +1918,12 @@ public class App {
          * System.out.println(longestConsecutive(prueba));
          */
 
-    //    String prueba = "ABC";
-    //    int numRows = 2;
+        // String prueba = "ABC";
+        // int numRows = 2;
 
         // System.out.println(convert(prueba, numRows));
 
-      //  int[] time = { 20, 40 };
+        // int[] time = { 20, 40 };
         // System.out.println(numPairsDivisibleBy60(time));
 
         // System.out.println((60-(150%60)) %60);
@@ -1803,7 +1936,7 @@ public class App {
          * System.out.println(longestPalindrome(words));
          */
 
-    //    int[] caseD = { 10, 20, 40, 80 };
+        // int[] caseD = { 10, 20, 40, 80 };
         // System.out.println(Math.absExact(-3 + 2) + "+");
 
         // System.out.println(canReorderDoubledV2(caseD));
@@ -1814,81 +1947,87 @@ public class App {
          * System.out.println(returnMax(arr));
          */
 
-     //   int[] testing = { 1, 2, 3, 1 };
+        // int[] testing = { 1, 2, 3, 1 };
         // System.out.println(Math.abs(0-3)); // es menor o igual a indexDiff que es
         // tres
-   /*      char[][] arr = {{'.','.','4','.','.','.','6','3','.'},
-                        {'.','.','.','.','.','.','.','.','.'},
-                        {'5','.','.','.','.','.','.','9','.'},
-                        {'.','.','.','5','6','.','.','.','.'},
-                        {'4','.','3','.','.','.','.','.','1'},
-                        {'.','.','.','7','.','.','.','.','.'},
-                        {'.','.','.','5','.','.','.','.','.'},
-                        {'.','.','.','.','.','.','.','.','.'},
-                        {'.','.','.','.','.','.','.','.','.'}}; */
+        /*
+         * char[][] arr = {{'.','.','4','.','.','.','6','3','.'},
+         * {'.','.','.','.','.','.','.','.','.'},
+         * {'5','.','.','.','.','.','.','9','.'},
+         * {'.','.','.','5','6','.','.','.','.'},
+         * {'4','.','3','.','.','.','.','.','1'},
+         * {'.','.','.','7','.','.','.','.','.'},
+         * {'.','.','.','5','.','.','.','.','.'},
+         * {'.','.','.','.','.','.','.','.','.'},
+         * {'.','.','.','.','.','.','.','.','.'}};
+         */
         // System.out.println(containsNearbyAlmostDuplicate(testing,3,0));
 
-      //  System.out.println(arr[0].length + "<>" + arr.length);
+        // System.out.println(arr[0].length + "<>" + arr.length);
 
-     //   System.out.println(isValidSudoku(arr));
+        // System.out.println(isValidSudoku(arr));
 
-      // String[] strs = {"eat","tea","tan","ate","nat","bat"};
+        // String[] strs = {"eat","tea","tan","ate","nat","bat"};
 
-       //System.out.println(groupAnagrams(strs));
+        // System.out.println(groupAnagrams(strs));
 
-      /* String longest = "au";
-       System.out.println(lengthOfLongestSubstring(longest)); */
+        /*
+         * String longest = "au";
+         * System.out.println(lengthOfLongestSubstring(longest));
+         */
 
-    //   String s2 ="abab",p2="ab";
-   //    System.out.println(findAnagrams(s, p));
+        // String s2 ="abab",p2="ab";
+        // System.out.println(findAnagrams(s, p));
 
-     //   int[] test = {1,1,2,2,3,3,4,4,5,5};
+        // int[] test = {1,1,2,2,3,3,4,4,5,5};
 
-   //     System.out.println(threeSumMulti(test, 8));
+        // System.out.println(threeSumMulti(test, 8));
 
-      /*   long start = System.nanoTime();
-        int[][] test = {{1,1,1},{1,2,2},{1,2,2}};
-        int [][] outputing = floodFill(test, 1, 1, 3);
-        long end = System.nanoTime();
+        /*
+         * long start = System.nanoTime();
+         * int[][] test = {{1,1,1},{1,2,2},{1,2,2}};
+         * int [][] outputing = floodFill(test, 1, 1, 3);
+         * long end = System.nanoTime();
+         * 
+         * for (int[] is : outputing) {
+         * for (int is2 : is) {
+         * System.out.print(is2);
+         * }
+         * System.out.println();
+         * }
+         * 
+         * System.out.println((double) end-start/1000000);
+         */
 
-        for (int[] is : outputing) {
-            for (int is2 : is) {
-                System.out.print(is2);
-            }
-            System.out.println();
-        }
+        /*
+         * char[][] islands = {
+         * {'1','1','1','1','0'},
+         * {'1','1','0','1','0'},
+         * {'0','0','0','0','0'},
+         * {'0','0','0','0','0'}};
+         */
 
-        System.out.println((double) end-start/1000000); */
+        // System.out.println(numIslands(islands));
 
- /*        char[][] islands = {
-        {'1','1','1','1','0'},
-        {'1','1','0','1','0'},
-        {'0','0','0','0','0'},
-        {'0','0','0','0','0'}}; */
+        /*
+         * int[][] islandsC = {{0,0,1,0,0,0,0,1,0,0,0,0,0},
+         * {0,0,0,0,0,0,0,1,1,1,0,0,0},
+         * {0,1,1,0,1,0,0,0,0,0,0,0,0},
+         * {0,1,0,0,1,1,0,0,1,0,1,0,0},
+         * {0,1,0,0,1,1,0,0,1,1,1,0,0},
+         * {0,0,0,0,0,0,0,0,0,0,1,0,0},
+         * {0,0,0,0,0,0,0,1,1,1,0,0,0},
+         * {0,0,0,0,0,0,0,1,1,0,0,0,0}};
+         */
 
+        // System.out.println(maxAreaOfIsland(islandsC));
 
+        // int[] nums = { 1, 2, 2 };
+        // System.out.println(subsetsWithDup(nums));
 
-     //   System.out.println(numIslands(islands));
+        // System.out.println(permute(new int[]{1,2}));
 
-
-  /*    int[][] islandsC = {{0,0,1,0,0,0,0,1,0,0,0,0,0},
-                        {0,0,0,0,0,0,0,1,1,1,0,0,0},
-                        {0,1,1,0,1,0,0,0,0,0,0,0,0},
-                        {0,1,0,0,1,1,0,0,1,0,1,0,0},
-                        {0,1,0,0,1,1,0,0,1,1,1,0,0},
-                        {0,0,0,0,0,0,0,0,0,0,1,0,0},
-                        {0,0,0,0,0,0,0,1,1,1,0,0,0},
-                        {0,0,0,0,0,0,0,1,1,0,0,0,0}}; */
-
-    //System.out.println(maxAreaOfIsland(islandsC));
-
-    int[] nums = {1,2,2};
-   // System.out.println(subsetsWithDup(nums));
-
-//   System.out.println(permute(new int[]{1,2}));
-
-//System.out.println("ESCALERA "+climbStairs(6));
-
+        // System.out.println("ESCALERA "+climbStairs(6));
 
     }
 }
