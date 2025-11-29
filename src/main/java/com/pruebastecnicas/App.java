@@ -1874,7 +1874,7 @@ public class App {
             }
 
            if(der < nums.length){
-                while(sumAdder<=target && der >=izq && der < nums.length){
+                while(sumAdder<target && der >=izq && der < nums.length){
                     sumAdder+=nums[der]; // empieza sumando la derecha hasta encontrar el máximo
                 
                     if(sumAdder >= target){
@@ -1895,11 +1895,11 @@ public class App {
                // der++;
            }
            
-      /*      System.out.println("SUMATORIA HJASTA AHORA ESTADISTICAS der"+sumAdder+"<"+nums[der]+"="+izq+""+der+"<>"+indexCounter);
-           Thread.sleep(100); */
+            System.out.println("SUMATORIA HJASTA AHORA ESTADISTICAS der"+sumAdder+"<"+nums[der]+"="+izq+""+der+"<>"+indexCounter);
+           Thread.sleep(100); 
 
            if(izq < nums.length){
-                while(sumAdder>=target && izq<=der && izq < nums.length){
+                while(sumAdder>target && izq<=der && izq < nums.length){
                     sumAdder-=nums[izq];
                     
                     if(sumAdder <= target){
