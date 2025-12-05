@@ -919,69 +919,6 @@ public class App {
 
     }
 
-    public static int threeSumMulti(int[] arr, int target) throws InterruptedException {
-        Arrays.sort(arr);
-        TreeMap<Integer, Integer> freq = new TreeMap<>(Comparator.reverseOrder());
-        for (int i : arr) {
-            if (!freq.containsKey(i)) {
-                freq.put(i, 1);
-            } else {
-                freq.put(i, freq.get(i) + 1);
-            }
-        }
-
-        int i = 0, c = 0, j = 0, output = 0;
-        List<Integer> summer = new ArrayList<>();
-        List<Integer> pivot = new ArrayList<>();
-
-        pivot.addAll(freq.keySet());
-
-        System.out.println(pivot.toString());
-        while (i < freq.size()) {
-            int firstNumber = pivot.get(i);
-            int firstFrequency = freq.get(firstNumber) * firstNumber;
-
-            if (firstFrequency < target) {
-                for (int k = 0; k < freq.get(firstNumber); k++) {
-                    summer.add(freq.get(firstNumber));
-                }
-            } else {
-                summer.add(freq.get(firstNumber));
-            }
-
-            int secNum = 0;
-            int thirdNum = 0;
-            while (j < freq.size()) {
-                secNum = pivot.get(j);
-                if (firstNumber + secNum < target) {
-                    summer.add(freq.get(pivot.get(j)));
-                    /*
-                     * while (c<freq.size()) {
-                     * thirdNum =pivot.get(c);
-                     * if(firstNumber+secNum+thirdNum == target){
-                     * summer.add(freq.get(thirdNum));
-                     * break;
-                     * }
-                     * c++;
-                     * }
-                     */
-
-                    break;
-                }
-                j++;
-                c++;
-            }
-
-            i++;
-            // j=i+1;
-            c = i;
-            System.out.println(summer.toString());
-            Thread.sleep(5000);
-        }
-        System.out.println(freq.toString());
-        return output;
-    }
-
     public static int[][] floodFill(int[][] image, int sr, int sc, int color) throws InterruptedException {
         int rowSize = image.length;
         int colSize = image[0].length;
@@ -1860,85 +1797,131 @@ public class App {
 
     // target = 7, nums = [2,3,1,2,4,3]
     public static int minSubArrayLen(int target, int[] nums) throws InterruptedException {
-        int izq = 0,der = 0,indexCounter = 0,sumAdder = 0,finalIndex = Integer.MAX_VALUE;
+        int izq = 0, der = 0, indexCounter = 0, sumAdder = 0, finalIndex = Integer.MAX_VALUE;
+        HashMap<Integer, Boolean> hasCheck = new HashMap<>();
 
-        HashMap<Integer,Boolean> returnType = new HashMap<>();
-        while(der < nums.length){
+        while (der < nums.length) {
+            sumAdder += nums[der];
 
-            if(izq == der  && der>0){
-                //sumAdder = 0; //reinicia y añade we
-             //   sumAdder-=nums[der];
-                sumAdder+=nums[der];
-                indexCounter++;
-               // der++;
-            }
+            if (sumAdder >= target) {
+                // System.out.println("INCREMENTO "+sumAdder+"<>"+izq+" "+der);
+                finalIndex = Math.min(Math.abs(izq - der) + 1, finalIndex);
+                hasCheck.put(target, true);
 
-           if(der < nums.length){
-                while(sumAdder<target && der >=izq && der < nums.length){
-                    sumAdder+=nums[der]; // empieza sumando la derecha hasta encontrar el máximo
-                
-                    if(sumAdder >= target){
-                        
-                        indexCounter++; // adicion final del rango del indice
-                        break; // sal del ciclo si ya sobrepasaste ese limite
-                        
-                    }
-                    indexCounter++;
-                    der++;
-            }
-           }
-
-           if(sumAdder >= target){
-                /**si la suma es igual al objetivo, entonces pondremos el minimo detectado y así sucesivamentw */
-                finalIndex = Math.min(indexCounter, finalIndex);
-                returnType.putIfAbsent(sumAdder, true);
-               // der++;
-           }
-           
-            System.out.println("SUMATORIA HJASTA AHORA ESTADISTICAS der"+sumAdder+"<"+nums[der]+"="+izq+""+der+"<>"+indexCounter);
-           Thread.sleep(100); 
-
-           if(izq < nums.length){
-                while(sumAdder>target && izq<=der && izq < nums.length){
-                    sumAdder-=nums[izq];
-                    
-                    if(sumAdder <= target){
-                        izq++;
-                        indexCounter--; // adicion final del rango del indice
-                        break; // sal del ciclo si ya sobrepasaste ese limite   
-                    }
-
-                    indexCounter--;
+                while (sumAdder > target) {
+                    sumAdder -= nums[izq];
                     izq++;
-
+                    indexCounter--;
+                    if (sumAdder >= target) {
+                        finalIndex = Math.min(Math.abs(izq - der) + 1, finalIndex);
+                        hasCheck.put(target, true);
+                        // System.out.println("deCREMENTO "+sumAdder+"<>"+izq+" "+der);
+                    }
+                }
             }
-           }
 
-       /*     System.out.println("SUMATORIA HJASTA AHORA ESTADISTICAS izq"+sumAdder+"<"+nums[der]+"="+izq+""+der+"<>"+indexCounter);
-           Thread.sleep(100);
- */
-           if(sumAdder >= target){
-                /**si la suma es igual al objetivo, entonces pondremos el minimo detectado y así sucesivamentw */
-                finalIndex = Math.min(indexCounter, finalIndex);
-                returnType.putIfAbsent(sumAdder, true);
-               // der++;
-           }
+            der++;
+            indexCounter++;
 
-           
-            der++; // ve incrementando el tamaño de la ventana por default
         }
-        return returnType.containsKey(target) ? indexCounter : 0;
+
+        return hasCheck.containsKey(target) ? finalIndex : 0;
+    }
+
+    public static int threeSumMulti(int[] arr, int target) throws InterruptedException {
+        HashMap<Integer, Integer> frequencyMap = new HashMap<>();
+        List<Integer> reverse = Arrays.stream(arr).boxed().collect(Collectors.toSet()).stream()
+                .collect(Collectors.toList());
+
+      //  Collections.reverse(reverse);
+      Collections.sort(reverse);
+
+       if(arr.length == 3){
+            int sum = 0;
+            for (int i = 0; i < arr.length; i++) {
+                sum+=arr[i];
+            }
+
+            return sum == target ? 1 : 0;
+        } 
+
+        for (int i = 0; i < arr.length; i++) {
+            frequencyMap.put(arr[i], frequencyMap.containsKey(arr[i]) ? frequencyMap.get(arr[i]) + 1 : 1);
+        }
+
+        int i = 0, j = 0;
+
+        long multiplierCounter = 0L;
+
+        System.out.println(frequencyMap.toString());
+
+        while (i < reverse.size()) {
+        //    System.out.println(reverse.get(j) + " first");
+            while (j < reverse.size()) {
+                int pair = target - reverse.get(i) - reverse.get(j);
+               System.out.println(pair+" "+reverse.get(i)+"<>"+reverse.get(j)+"<>");
+                if (reverse.get(i) <= reverse.get(j) && reverse.get(j) <= pair && frequencyMap.containsKey(pair)
+                        && pair + reverse.get(j) + reverse.get(i) == target) {
+                    System.out.println(reverse.get(i)+"<a>"+reverse.get(j)+" "+pair);
+                    /*Ahora comprueba los 3 pinches casos
+                    recuerda que inviertes el arreglo, so el j es el número mayor e i el menor we, comparas al reves*/
+                    
+
+                    //**Este si fue hecho conb ayuda, la formula de los combinatronics no
+                    // es un tema nativo de programación, repasarlo. Con brute force a cualquiera le queda,
+                    // pero el tema de la calculación ahi si no */
+                    int  x = reverse.get(i);
+                    int  y = reverse.get(j);
+                    int  z = pair;
+                    long  fx = frequencyMap.get(x);
+                    long  fy = frequencyMap.get(y);
+                    long  fz = frequencyMap.get(pair);
+                    if (x == y && y == z) {
+                        multiplierCounter += (fx * (fx - 1) * (fx - 2) / 6 )%  1_000_000_007;
+                    }
+                    else if (x == y && y < z) {
+                        multiplierCounter += ((fx * (fx - 1) / 2) * fz ) %  1_000_000_007;
+                    }
+                    else if (x < y && y == z) {
+                        multiplierCounter += (fx * (fy * (fy - 1) / 2)  ) %  1_000_000_007;
+                    }
+                    else { 
+                        multiplierCounter +=( fx * fy * fz ) %  1_000_000_007;
+                    }
+
+
+                    System.out.println("SUMA TOTAL "+multiplierCounter);
+                 //   multiplierCounter = 0;
+
+                }
+
+                j++;
+            }
+            i++;
+            j = i;
+        }
+
+        return (int) multiplierCounter % 1_000_000_007;
     }
 
     /* Del pdf llevo dia 1, 2, 4,8 */
 
     public static void main(String[] args) throws InterruptedException {
 
-        int[] targets = {1,2,3,4,5};
-        int target = 11;
+          int[] arrs = {16,51,36,29,84,80,46,97,84,16};
+        int target = 171;  
+        System.out.println(threeSumMulti(arrs, target));
 
-        System.out.println(minSubArrayLen(target, targets));
-
+        /*
+         * int[] targets = {2,3,1,2,4,3};
+         * int target = 7;
+         */
+        /*
+         * int[] targets = {1,1,1,1,1,1,1,1};
+         * int target = 11;
+         * 
+         * System.out.println(minSubArrayLen(target, targets));
+         */
         /*
          * int[] numss ={-7,-8,7,5,7,1,6,0};
          * int k = 4;
@@ -2154,7 +2137,7 @@ public class App {
          * int[] numss = {6,2,3,500,400,4,2,6000,200,7,9999,9999,9999,9999,9999,9998};
          * int k = 3;
          */
-     //   System.out.println(maxSlidingWindow(numss, k));
+        // System.out.println(maxSlidingWindow(numss, k));
         // target = 7, nums = [2,3,1,2,4,3]
         /*
          * int [] numsx = {2,3,1,2,4,3};
