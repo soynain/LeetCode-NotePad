@@ -1176,135 +1176,6 @@ public class App {
         return max;
     }
 
-    /*
-     * public static List<List<Integer>> subsetsWithDup(int[] nums) {
-     * Set<List<Integer>> output = new HashSet<>();
-     * int i=0,j=1;
-     * 
-     * output.add(new ArrayList<>()); // se añade el vacio por regla
-     * List<Integer> mainPiv =
-     * Arrays.stream(nums).mapToObj(e->Integer.valueOf(e)).collect(Collectors.
-     * toCollection(ArrayList::new));
-     * Set<Integer> uniqueElements= new HashSet<>(mainPiv); //crea un set con
-     * elementos únicos
-     * output.add(mainPiv); //añade todo el arreglo como regla
-     * 
-     * Iterator<Integer> it = uniqueElements.iterator();
-     * 
-     * while(it.hasNext()){
-     * Integer pivot = it.next();
-     * // System.out.println(pivot);
-     * output.add(new ArrayList<>(Arrays.asList(pivot)));
-     * // output.add(new ArrayList<>(it.next()));
-     * }
-     * 
-     * // System.out.println(output.toString());
-     * 
-     * 
-     * 
-     * while(j<nums.length ){
-     * List<Integer> coords = new ArrayList<>();
-     * coords.add(nums[i]);
-     * coords.add(nums[j]);
-     * 
-     * output.add(coords);
-     * i++;
-     * j++;
-     * }
-     * 
-     * // System.out.println(output.toString());
-     * 
-     * List<List<Integer>> finalOutput =
-     * output.stream().collect(Collectors.toList());
-     * System.out.println(finalOutput.toString());
-     * 
-     * 
-     * 
-     * return finalOutput;
-     * }
-     */
-
-    /*
-     * public static List<List<Integer>> subsetsWithDup(int[] nums) throws
-     * InterruptedException {
-     * Set<List<Integer>> output = new LinkedHashSet<>();
-     * int i=0,j=0;
-     * 
-     * if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por
-     * regla
-     * 
-     * Queue<Integer> pivot =
-     * 
-     * return new ArrayList<>();
-     * 
-     * }
-     */
-
-    public static List<List<Integer>> permute(int[] nums) throws InterruptedException {
-        Queue<Integer> pivot = new LinkedList<>();
-        Set<List<Integer>> output = new LinkedHashSet();
-
-        Queue<Integer> subQueue = new LinkedList<>();
-        Set<List<Integer>> subCombs = new HashSet<>();
-
-        for (int integer : nums) {
-            pivot.add(integer);
-        }
-
-        List<Integer> checker = pivot.stream().collect(Collectors.toList());
-        List<Integer> subChequer = new ArrayList<>();
-
-        while (true) {
-
-            output.add(new ArrayList<>(checker));
-            subQueue.addAll(checker.subList(1, checker.size()));
-
-            /*
-             * System.out.println(subQueue.toString()+"---");
-             * Thread.sleep(3000);
-             */
-
-            subChequer.addAll(subQueue.stream().collect(Collectors.toList()));
-            int localPiv = checker.get(0);
-            if (nums.length > 2) {
-                while (!subCombs.contains(subChequer)) {
-
-                    Queue<Integer> cache = new LinkedList<>();
-                    int rotate = subQueue.poll();
-                    subQueue.add(rotate);
-                    // subQueue.add(new ArrayList<>(subQueue));
-                    subCombs.add(new ArrayList<>(subQueue));
-
-                    cache.add(localPiv);
-                    cache.addAll(new ArrayList<>(subQueue));
-                    output.add(new ArrayList<>(cache));
-
-                    List<Integer> reversedPiv = new LinkedList<>(subQueue);
-                    Collections.reverse(reversedPiv);
-
-                    subCombs.add(reversedPiv);
-
-                    cache.clear();
-                    cache.add(localPiv);
-                    cache.addAll(reversedPiv);
-                    output.add(new ArrayList<>(cache));
-                }
-            }
-
-            int rev = pivot.poll();
-            pivot.add(rev);
-            checker = pivot.stream().collect(Collectors.toList());
-            if (output.contains(checker)) {
-                break;
-            }
-            subChequer.clear();
-            subQueue.clear();
-
-        }
-
-        return output.stream().collect(Collectors.toList());
-    }
-
     /**
      * fibonachi hecho a la improvisada, a pesar de que ya hay un codigo, lo mismo
      * sucede con esos casos de recursión como
@@ -1904,13 +1775,96 @@ public class App {
         return (int) multiplierCounter % 1_000_000_007;
     }
 
+
+    
+    /**Aprendetelo para resolver los subsiguientes, sin letras son los más fáciles */
+    public static List<List<Integer>> permute(int[] nums){
+
+        List<List<Integer>> result = new ArrayList<>();
+
+        int[] recursiveCounterByLevel = new int[nums.length];
+        Arrays.fill(recursiveCounterByLevel,0);
+
+        result.add(Arrays.stream(nums).boxed().collect(Collectors.toList()));
+
+        /**Algorithm: 
+
+        The algorithm generates (n-1)! permutations of the first n-1 elements, 
+        adjoining the last element to each of these. 
+        This will generate all of the permutations that end with the last element.
+        If n is odd, swap the first and last element and if n is even, 
+        then swap the ith element (i is the counter starting from 0) 
+        and the last element and repeat the above algorithm till i is less than n.
+        In each iteration, the algorithm will produce 
+        all the permutations that end with the current last element. */
+
+        int i=0;
+        while(i<nums.length){
+           // System.out.println("level "+i+" "+Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
+            if(recursiveCounterByLevel[i] <i){
+                /**Comienza el swapping */
+                if(i%2 == 0){
+                    int elem = nums[i];
+                    nums[i] = nums[0];
+                    nums[0] = elem; /**Swapea el elemento 0 con el último */
+                    
+                }else{
+                    int elem = nums[recursiveCounterByLevel[i]];
+                    nums[recursiveCounterByLevel[i]] = nums[i];
+                    nums[i] = elem; /**Swapea el elemento 0 con el último */
+                }
+
+                result.add(Arrays.stream(nums).boxed().collect(Collectors.toList()));
+
+                recursiveCounterByLevel[i]++;
+                i=0;
+
+              //  System.out.println(result.toString()+" asd");
+            }else{
+                recursiveCounterByLevel[i] = 0;
+                i++;
+             //   System.out.println(result.toString()+" bsd");
+            }
+        }
+        
+
+        return result;
+
+    }
+
+     public static List<List<Integer>> subsetsWithDup(int[] nums) {
+        Set<List<Integer>> output = new LinkedHashSet<>();
+        int i=0,j=0;
+
+        if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por regla
+
+        while(i<nums.length){
+            while (j<nums.length) {
+                List<Integer> cache = new ArrayList<>();
+                cache.add(nums[i]);
+                if(cache.size()==3){
+                    output.add(new ArrayList<>(cache));
+                }
+            }
+        }
+
+
+         return new ArrayList<>(output);
+
+     }
+
     /* Del pdf llevo dia 1, 2, 4,8 */
 
     public static void main(String[] args) throws InterruptedException {
 
-          int[] arrs = {16,51,36,29,84,80,46,97,84,16};
+        int[] nums = {6,3,2,7,4,-1};
+
+
+        System.out.println(permute(nums).toString()+" ay");
+
+      /*     int[] arrs = {16,51,36,29,84,80,46,97,84,16};
         int target = 171;  
-        System.out.println(threeSumMulti(arrs, target));
+        System.out.println(threeSumMulti(arrs, target)); */
 
         /*
          * int[] targets = {2,3,1,2,4,3};
