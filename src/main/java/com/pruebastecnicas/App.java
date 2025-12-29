@@ -2096,15 +2096,60 @@ public class App {
         return reversedAux.hashCode() == aux.hashCode() ? true: false;
     }
 
+    public static int reverse(int x) {
+        if(x == Integer.MAX_VALUE || x == Integer.MIN_VALUE) return 0;
+        int limitCalculation = x>0 ? (int)Math.log10(x)+1 : (int)Math.log10(x*-1)+1; // formula que te da las veces para dividir un número y sacar el decimal   
+        Double numberParsedForCalc = x>0 ? Double.valueOf((x)) : Double.valueOf((x*-1));
+
+        System.out.println(numberParsedForCalc);
+
+      System.out.println(limitCalculation+" dddd");
+
+        int i=0;
+        int position = 0;
+
+        int concatter = 0;
+
+        boolean limited = false;
+
+        while(i<limitCalculation){
+            position = (int) Math.floor(numberParsedForCalc) %10;
+
+            numberParsedForCalc = numberParsedForCalc /10;
+
+            concatter=concatter*10 + position;
+            System.out.println(concatter);
+
+            if(concatter>Integer.MAX_VALUE || (concatter > (int)(Double.valueOf(Integer.MAX_VALUE)/10 /10/10/10/10 ) && i ==4 && limitCalculation == 10)){
+              //  System.out.println("EHNTRA?");
+                limited = true;
+                break;
+            }
+
+           
+          //  aux.add(position);
+            i++;
+        }
+
+        System.out.println(concatter);
+
+        if(!limited && x<0){
+            concatter = concatter*-1;
+        }
+        return limited ? 0 : concatter;
+    }
+
 
     public static void main(String[] args) throws InterruptedException {
 
+         System.out.println((int)(Double.valueOf(Integer.MAX_VALUE)/10 /10/10/10/10 )+" "+Integer.MIN_VALUE+" >>>"+Integer.MAX_VALUE);
+        System.out.println(reverse(1563847412));
 
    /*      System.out.println((int)Math.log10(121)+1);
 
         System.out.println((int)Math.floor(121.0) % 10 ); */
 
-        List<Integer> aux = new ArrayList<>();
+ /*        List<Integer> aux = new ArrayList<>();
 
         aux.add(1);
         aux.add(2);
@@ -2113,9 +2158,9 @@ public class App {
         aux2.add(1);
         aux2.add(2);
         aux2.add(1);
-
+ */
      //   System.out.println(aux.hashCode() == aux2.hashCode());
-
+//
         System.out.println(isPalindrome(12221));
        /*  System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
 
