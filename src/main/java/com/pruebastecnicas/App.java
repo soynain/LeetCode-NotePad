@@ -1800,7 +1800,7 @@ public class App {
 
         int i=0;
         while(i<nums.length){
-           // System.out.println("level "+i+" "+Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
+            System.out.println("level "+i+" "+Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
             if(recursiveCounterByLevel[i] <i){
                 /**Comienza el swapping */
                 if(i%2 == 0){
@@ -1827,41 +1827,286 @@ public class App {
             }
         }
         
-
+         System.out.println("level  "+Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
         return result;
 
     }
 
-     public static List<List<Integer>> subsetsWithDup(int[] nums) {
+    public static List<List<Integer>> subsetsWithDup(int[] nums) {
         Set<List<Integer>> output = new LinkedHashSet<>();
         int i=0,j=0;
 
+        int[] recursiveC = new int[nums.length];
+        Arrays.fill(recursiveC,0);
+
         if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por regla
 
+
+
         while(i<nums.length){
-            while (j<nums.length) {
-                List<Integer> cache = new ArrayList<>();
-                cache.add(nums[i]);
-                if(cache.size()==3){
-                    output.add(new ArrayList<>(cache));
+            List<Integer> pivotLister = new ArrayList<>();
+
+            recursiveC[i] = 1;
+
+           // pivotLister.add(nums[i]);
+
+            System.out.println(Arrays.stream(recursiveC).boxed().collect(Collectors.toList()));
+            while(j<nums.length){
+               // pivotLister.add(nums[i]);
+                if(recursiveC[j]!=1){
+                    pivotLister.add(nums[j]);
+                //    output.add(new ArrayList<>());
+                    //output.add(new ArrayList<>(pivotLister));
                 }
+                //pivotLister.clear();
+                j++;
+            }
+
+            output.add(new ArrayList<>(pivotLister));
+            recursiveC[i] = 0;
+            i++;
+            j=0;
+        }
+
+        return output.stream().collect(Collectors.toList());
+     } 
+
+     public static String zigZagConversion(String s, int numRows){
+        if (numRows <= 1) {
+            return s;
+        }
+
+        Queue<Character> helperPush = new LinkedList<>(s.chars().mapToObj(e->Character.valueOf((char)e)).collect(Collectors.toList()));
+        List<List<Character>> prueba = new ArrayList<>();
+
+        String h="";
+        int i=0,j=0;
+        String newStr="";
+
+        Set<Character> builderStr = new LinkedHashSet<>();
+        List<Character> builderStrOdd = new ArrayList<>();
+
+        int k=0;
+
+        int maxLength = Integer.MIN_VALUE;
+        while(helperPush.size()>1){
+            h+=String.valueOf(helperPush.poll());
+
+            if(h.length() == numRows){
+                List<Character> adder = h.chars().mapToObj(e->(char)e).toList();
+                maxLength=Math.max(maxLength, adder.size());
+                prueba.add(adder);
+                
+                h=h.substring(h.length()-1,h.length());
             }
         }
 
+        h+=String.valueOf(helperPush.poll());
+ System.out.println(prueba.toString());
+       
+        List<Character> adder = h.chars().mapToObj(e->(char)e).toList();
+        prueba.add(adder);
+        
+        maxLength=Math.max(maxLength, adder.size());
 
-         return new ArrayList<>(output);
+        while(i<prueba.size()){
+            
+            if(i%2 !=0){
+                List<Character> piv = new ArrayList<>(prueba.get(i));
+               // piv.set(0, '-');
+               List<Character> piv2 = new ArrayList<>();
+               
+               if(piv.size()<maxLength){
+                    piv2.add('-');
 
+                    //piv2.addAll(piv);
+               }
+                Collections.reverse(piv);
+
+                piv2.addAll(piv);
+                prueba.set(i, piv2);
+            }
+
+            i++;
+        }
+
+        System.out.println(prueba.toString());
+        while(newStr.length()<s.length()){
+            List<Character> piv = new ArrayList<>(prueba.get(j));
+            if(piv.size()>0){
+                if(k%2!=0){
+                    builderStrOdd.add(piv.get(0));
+                }else{
+                    builderStr.add(piv.get(0));
+                }
+                //newStr+=piv.get(0);
+                piv.remove(0); //remove the head
+                prueba.set(j, piv);
+            }
+
+            j++;
+
+            if(j>=prueba.size()){
+                newStr+= k%2 == 0 ? builderStr.stream().map(e->String.valueOf(e)).collect(Collectors.joining()) 
+                    : builderStrOdd.stream().map(e->String.valueOf(e)).collect(Collectors.joining());
+        //      System.out.println(newStr);
+                j=0;
+                k++;
+                builderStr.clear();
+                builderStrOdd.clear();
+            }
+        }
+        
+
+        return newStr.replace("-", "");
      }
 
     /* Del pdf llevo dia 1, 2, 4,8 */
 
+
+    public static void printNumbers(){
+        int[] counts = {0,0,0,0};
+
+        int i=counts.length-1,j=counts.length-1;
+
+        while(counts[0] !=9){
+            System.out.println("i "+i);
+            if(counts[i] == 9){
+                int aux = i;
+
+                while(aux<counts.length){
+                    if(counts[aux] == 9){
+                        counts[aux] = 0;
+                    }
+                    aux++;
+                }
+
+                i--;
+                counts[i]++;
+            }else{
+                counts[i] ++;
+              //  System.out.println("YALXXX "+" "+counts[i]);
+            }
+
+
+            int auxPrint = 0;
+            while (auxPrint <counts.length) {
+                System.out.print(counts[auxPrint]+"<");
+                auxPrint++;
+            }
+
+            System.out.println();
+            i=counts.length-1;
+        }
+        
+    }
+
+    public static int myAtoi(String s) {
+        int result= 0;
+
+        String concatter = "";
+        Queue<Character> cleansedOutput = new LinkedList<>(s.trim().chars().mapToObj(r->Character.valueOf((char)r)).collect(Collectors.toList()));
+        int state=0; // estado del automata
+
+        Set<Character> charsProhibited = new HashSet<>(List.of('.',' ','+','-')); // filtros para el estado dos
+
+        Character current = null;
+
+        while(cleansedOutput.size()>0){
+            current = cleansedOutput.poll(); // obten la primera letra;
+
+            if(Character.isLetter(current)) break; // si detectas cualquier letra en el ciclo, ya no concatenes nada, lo cortas
+         //   if(charsProhibited.contains(current) && state >0) break;
+
+            if(state == 0){ // en el primer estado tu esperas solo el -
+                if(current == '-' || current == '+'){
+                    concatter+=String.valueOf(current); // concatena el simbolo de menos
+                    state = 1; // como ya tienes un simbolo, pasa al siguiente estado
+                }else if(Character.isDigit(current)){
+                    if(current !='0'){
+                        concatter+=String.valueOf(current); // si en el estado 0 encuentras un número, saltate a validar al estado 2
+                        state = 2;
+                    }else{
+                        state=1;
+                    }
+                }else{
+                    concatter="";
+                    break; //
+                }
+            }else if(state == 1){ // si en el estado 1 validas puros ceros, omite esos leading ceros en el cocatenado
+                if(charsProhibited.contains(current)){
+                    concatter = "";
+                    break;
+                }
+                if(current != '0' && Character.isDigit(current)){ // si es diferente a 0 y no es letra, saltate al 2 para validad números
+                    concatter+=String.valueOf(current);
+                    state = 2;
+                }else{
+                    state = 1;
+                }
+            }else{ // en este estado solo evaluas números
+                if(charsProhibited.contains(current)) break;
+                if(Character.isDigit(current)) concatter+=String.valueOf(current);
+            }
+
+            
+        }
+
+        System.out.println(concatter+" resultado" +state+" "+current);
+        //}
+
+        if(concatter.length() == 0) return 0;
+        if(state == 0 && Character.isLetter(current)){
+            concatter = "";
+            return 0;
+        }
+        if(state==1 && (charsProhibited.contains(current) || Character.isLetter(current))) return 0;
+        
+        int trueLength = concatter.charAt(0) == '-' || concatter.charAt(0) == '+' ? concatter.substring(1, concatter.length()).length() : concatter.length();
+
+        if(trueLength >10){
+            return Character.isDigit(concatter.charAt(0))  ? Integer.MAX_VALUE : ( concatter.charAt(0) == '-' ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+        }
+
+        result = (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, Long.parseLong(concatter)));
+        return result;
+    }
+
+
     public static void main(String[] args) throws InterruptedException {
 
-        int[] nums = {6,3,2,7,4,-1};
+
+        System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
+
+        System.out.println(myAtoi("-42"));
+        System.out.println(myAtoi("-0000000000042"));
+        System.out.println(myAtoi("                                   -042"));
+        System.out.println(myAtoi("42"));
+        System.out.println(myAtoi("133c111"));
+        System.out.println(myAtoi("                         0-1"));
+        System.out.println(myAtoi("-+12"));
+        System.out.println(myAtoi("+-12"));
+        System.out.println(myAtoi("+12"));
+        System.out.println(myAtoi("-"));
+        System.out.println(myAtoi("+1"));
+        System.out.println(myAtoi("    +0a32"));
+        System.out.println(myAtoi("words and 987"));
+        System.out.println(myAtoi("20000000000000000000"));
+        System.out.println(myAtoi(".1"));
+        System.out.println(myAtoi("  0000000000012345678"));
+
+      /*   printNumbers();
+        System.out.println(zigZagConversion("ABCD", 2));
+ */
+/* 
+         int[] nums = {1,2,2,3};
+
+        System.out.println(subsetsWithDup(nums));  */
+       /*   int[] nums = {6,3,2,7,4,-1};
 
 
-        System.out.println(permute(nums).toString()+" ay");
-
+        System.out.println(permute(nums)); */
+ 
       /*     int[] arrs = {16,51,36,29,84,80,46,97,84,16};
         int target = 171;  
         System.out.println(threeSumMulti(arrs, target)); */
