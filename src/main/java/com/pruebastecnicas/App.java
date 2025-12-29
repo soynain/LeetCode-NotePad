@@ -2072,11 +2072,52 @@ public class App {
         return result;
     }
 
+     public static boolean isPalindrome(int x) {
+        if(x<0) return false;
+        int limitCalculation = (int)Math.log10(x)+1; // formula que te da las veces para dividir un número y sacar el decimal   
+        Double numberParsedForCalc = Double.valueOf((x));
+
+        int i=0;
+        int position = 0;
+
+        List<Integer> aux = new ArrayList<>();
+
+        while(i<limitCalculation){
+            position = (int) Math.floor(numberParsedForCalc) %10;
+            numberParsedForCalc = numberParsedForCalc /10;
+            aux.add(position);
+            i++;
+        }
+
+        /**Que pendejez wey, si ya lo andas leyendo de atras jajaja, pero bueh, lei este consejo de reddit, alch no lo pensé asi  */
+        List<Integer> reversedAux = new ArrayList<>(aux);
+        Collections.reverse(reversedAux);
+
+        return reversedAux.hashCode() == aux.hashCode() ? true: false;
+    }
+
 
     public static void main(String[] args) throws InterruptedException {
 
 
-        System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
+   /*      System.out.println((int)Math.log10(121)+1);
+
+        System.out.println((int)Math.floor(121.0) % 10 ); */
+
+        List<Integer> aux = new ArrayList<>();
+
+        aux.add(1);
+        aux.add(2);
+        aux.add(1);
+        List<Integer> aux2 = new ArrayList<>();
+        aux2.add(1);
+        aux2.add(2);
+        aux2.add(1);
+
+     //   System.out.println(aux.hashCode() == aux2.hashCode());
+
+        System.out.println(isPalindrome(12221));
+       /*  System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
 
         System.out.println(myAtoi("-42"));
         System.out.println(myAtoi("-0000000000042"));
@@ -2093,7 +2134,7 @@ public class App {
         System.out.println(myAtoi("words and 987"));
         System.out.println(myAtoi("20000000000000000000"));
         System.out.println(myAtoi(".1"));
-        System.out.println(myAtoi("  0000000000012345678"));
+        System.out.println(myAtoi("  0000000000012345678")); */
 
       /*   printNumbers();
         System.out.println(zigZagConversion("ABCD", 2));
