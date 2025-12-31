@@ -2140,11 +2140,121 @@ public class App {
     }
 
 
-    public static void main(String[] args) throws InterruptedException {
+    /** 0,0 , 0,1 - 0,2 */
 
+    /**De haber sabido que solo abarcaba las primeras letras, pero leetcode luego se cotiza. Para ser un starterr que
+     * lleva 2 meses de su vida leetcodeando, no está mal por más larga que alla diseñado la solucion
+     */
+    public static String longestCommonPrefix(String[] strs) {
+        HashMap<Integer, HashSet<String>> prefixCounter = new HashMap<>();
+        HashMap<String, Integer> charAcrossCounter = new HashMap<>();
+        boolean sequential = false;
+        String helper = "";
+
+        Optional<Integer> minSize = Arrays.asList(strs).stream().map(e->e.length()).min(Comparator.naturalOrder());
+
+        if(!minSize.isPresent()) return ""; //casos vacios
+
+        int subsSlice = minSize.get();
+
+        for (String stringToSplit : strs) {
+           /// substrings.add();
+            String checkerPerElem = stringToSplit.substring(0,subsSlice);
+            int temp = 0;
+
+             while(temp<checkerPerElem.length()){
+              //  System.out.println(checkerPerElem.charAt(temp));
+                if(!prefixCounter.containsKey(temp)){
+                    HashSet<String> tempArr = new HashSet<>();
+                    tempArr.add(String.valueOf(checkerPerElem.charAt(temp)));
+                    prefixCounter.put(temp, new HashSet<>(tempArr));
+                }else{
+                    //System.out.println(checkerPerElem.charAt(temp)+" existe "+temp);
+                    HashSet<String> tempArr = prefixCounter.get(temp);
+                    tempArr.add(String.valueOf(checkerPerElem.charAt(temp)));
+                    prefixCounter.put(temp, new HashSet<>(tempArr));
+                }
+
+                temp++;
+            }
+
+        }
+
+        System.out.println(prefixCounter.toString());
+
+        Map<Integer, String> maximumLength = new TreeMap<>(Comparator.reverseOrder());
+
+        int c = 0;
+
+        while(c<prefixCounter.size()){
+            if( prefixCounter.get(c).size() ==1){
+                if(!sequential && c==0){
+                    sequential = true;
+                }
+                if(sequential){
+                    helper +=  prefixCounter.get(c).iterator().next(); // como es set para evitar duplicados usate el next del iterator
+                }
+                
+            }else{
+               if(sequential){
+                    maximumLength.putIfAbsent(helper.length(), helper);
+                    helper="";
+                    sequential = false;
+                    break; //porque solo debe corresponder a las primerasd letras péro leetcode siempre pone sus testcases ambiguos
+               }
+            }
+            c++;
+        }
+
+        /**DCon este snippet comentado, System.out.println(longestCommonPrefix(new String[]{"flower","fkow"})+" respuesta"); este test case
+         * te devuelve el true, lo pensé para indexes en comun
+         */
+        /* for (int i = 0; i < prefixCounter.size(); i++) {
+            if( prefixCounter.get(i).size() ==1){
+                if(!sequential){
+                    sequential = true;
+                }
+                if(sequential){
+                    helper +=  prefixCounter.get(i).iterator().next(); // como es set para evitar duplicados usate el next del iterator
+                }
+                
+            }else{
+               if(sequential){
+                    maximumLength.putIfAbsent(helper.length(), helper);
+                    helper="";
+                    sequential = false;
+               }
+            }
+        } */
+        maximumLength.putIfAbsent(helper.length(), helper);
+        prefixCounter.clear();
+
+        System.out.println(maximumLength.toString());
+        return maximumLength.size()>0 ? (maximumLength.entrySet().iterator().next().getValue().isEmpty() ? "" : maximumLength.entrySet().iterator().next().getValue()) : "";
+ 
+    }
+
+
+    public static void main(String[] args) throws InterruptedException {
+      //  System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"}));
+
+  /*       System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"})+" respuesta"); 
+        System.out.println(longestCommonPrefix(new String[]{"rowdynas","rowpynas","rowllbynas"})+" respuesta");
+        System.out.println(longestCommonPrefix(new String[]{"a", "aca", "accb", "b"})+" respuesta");
+        System.out.println(longestCommonPrefix(new String[]{"iflower","flow","flight"})+" RESPUESTA");
+        System.out.println(longestCommonPrefix(new String[]{"c","acc","ccc"}));
+        System.out.println(longestCommonPrefix(new String[]{"reflower","flow","flight"})+" respuesta"); 
+
+        System.out.println(longestCommonPrefix(new String[]{"dog","racecar","car"})+" respuesta"); */
+        System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"}));
+        System.out.println(longestCommonPrefix(new String[]{"a"})+" respuesta");
+        System.out.println(longestCommonPrefix(new String[]{"flower","fkow"})+" respuesta");
+        System.out.println(longestCommonPrefix(new String[]{"aca","cba"})+" respuesta");
+      //  System.out.println(longestCommonPrefix(new String[]{"radosadasdadasdasdasdasdasdadasdasdasaddddddddddddddg","racasadasdasdasdasdasdasdasdcxcvzxccsddssczxcsdfcsdcsdcsdcsdcddcdscecar","racar","raracacar"}));
+/* 
          System.out.println((int)(Double.valueOf(Integer.MAX_VALUE)/10 /10/10/10/10 )+" "+Integer.MIN_VALUE+" >>>"+Integer.MAX_VALUE);
         System.out.println(reverse(1563847412));
-
+ */
    /*      System.out.println((int)Math.log10(121)+1);
 
         System.out.println((int)Math.floor(121.0) % 10 ); */
@@ -2161,7 +2271,7 @@ public class App {
  */
      //   System.out.println(aux.hashCode() == aux2.hashCode());
 //
-        System.out.println(isPalindrome(12221));
+       // System.out.println(isPalindrome(12221));
        /*  System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
 
         System.out.println(myAtoi("-42"));
