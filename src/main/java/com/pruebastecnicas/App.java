@@ -2362,7 +2362,6 @@ public class App {
     //    System.out.println("ESTADO DE LAS PILAS "+c1Reverse.toString()+" "+c2Reverse.toString());
 
         while(c1Reverse.size() >0){
-          //  numOne = Long.parseLong( String.valueOf(numOne).concat(String.valueOf(c1Reverse.pop())) ); 
           numOne = new BigInteger(String.valueOf(numOne).concat(String.valueOf(c1Reverse.pop())));
         }
 
@@ -2371,11 +2370,7 @@ public class App {
          
         }
 
-     //   System.out.println("NUMEROS GENERADOS   "+numOne+" <> "+numTwo);
-
         String resultToTransform = String.valueOf(numOne.add(numTwo) ); // de 807 tienes que convertirlo a 708, como lo logras
-
-      //  System.out.println(resultToTransform);
 
         int cc = 0;
 
@@ -2388,17 +2383,12 @@ public class App {
             if(resultSum ==null){
                 tempNode.next = null;
                 resultSum = tempNode;
-             //   System.out.println(resultSum.val+" aa");
             }else{
                 tempNode.next = resultSum;
-             //   System.out.println(tempNode.next.val+" sss");
                 resultSum = tempNode;
             }
             cc++;
         }
-        
-
-      //  System.out.println(tempNode.next.val);
 
         return resultSum;
     }
