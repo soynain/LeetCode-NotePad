@@ -1,6 +1,7 @@
 package com.pruebastecnicas;
 
 import java.lang.annotation.Target;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.channels.Pipe.SourceChannel;
 import java.time.Duration;
@@ -1704,17 +1705,17 @@ public class App {
         List<Integer> reverse = Arrays.stream(arr).boxed().collect(Collectors.toSet()).stream()
                 .collect(Collectors.toList());
 
-      //  Collections.reverse(reverse);
-      Collections.sort(reverse);
+        // Collections.reverse(reverse);
+        Collections.sort(reverse);
 
-       if(arr.length == 3){
+        if (arr.length == 3) {
             int sum = 0;
             for (int i = 0; i < arr.length; i++) {
-                sum+=arr[i];
+                sum += arr[i];
             }
 
             return sum == target ? 1 : 0;
-        } 
+        }
 
         for (int i = 0; i < arr.length; i++) {
             frequencyMap.put(arr[i], frequencyMap.containsKey(arr[i]) ? frequencyMap.get(arr[i]) + 1 : 1);
@@ -1727,42 +1728,41 @@ public class App {
         System.out.println(frequencyMap.toString());
 
         while (i < reverse.size()) {
-        //    System.out.println(reverse.get(j) + " first");
+            // System.out.println(reverse.get(j) + " first");
             while (j < reverse.size()) {
                 int pair = target - reverse.get(i) - reverse.get(j);
-               System.out.println(pair+" "+reverse.get(i)+"<>"+reverse.get(j)+"<>");
+                System.out.println(pair + " " + reverse.get(i) + "<>" + reverse.get(j) + "<>");
                 if (reverse.get(i) <= reverse.get(j) && reverse.get(j) <= pair && frequencyMap.containsKey(pair)
                         && pair + reverse.get(j) + reverse.get(i) == target) {
-                    System.out.println(reverse.get(i)+"<a>"+reverse.get(j)+" "+pair);
-                    /*Ahora comprueba los 3 pinches casos
-                    recuerda que inviertes el arreglo, so el j es el número mayor e i el menor we, comparas al reves*/
-                    
+                    System.out.println(reverse.get(i) + "<a>" + reverse.get(j) + " " + pair);
+                    /*
+                     * Ahora comprueba los 3 pinches casos
+                     * recuerda que inviertes el arreglo, so el j es el número mayor e i el menor
+                     * we, comparas al reves
+                     */
 
-                    //**Este si fue hecho conb ayuda, la formula de los combinatronics no
-                    // es un tema nativo de programación, repasarlo. Con brute force a cualquiera le queda,
+                    // **Este si fue hecho conb ayuda, la formula de los combinatronics no
+                    // es un tema nativo de programación, repasarlo. Con brute force a cualquiera le
+                    // queda,
                     // pero el tema de la calculación ahi si no */
-                    int  x = reverse.get(i);
-                    int  y = reverse.get(j);
-                    int  z = pair;
-                    long  fx = frequencyMap.get(x);
-                    long  fy = frequencyMap.get(y);
-                    long  fz = frequencyMap.get(pair);
+                    int x = reverse.get(i);
+                    int y = reverse.get(j);
+                    int z = pair;
+                    long fx = frequencyMap.get(x);
+                    long fy = frequencyMap.get(y);
+                    long fz = frequencyMap.get(pair);
                     if (x == y && y == z) {
-                        multiplierCounter += (fx * (fx - 1) * (fx - 2) / 6 )%  1_000_000_007;
-                    }
-                    else if (x == y && y < z) {
-                        multiplierCounter += ((fx * (fx - 1) / 2) * fz ) %  1_000_000_007;
-                    }
-                    else if (x < y && y == z) {
-                        multiplierCounter += (fx * (fy * (fy - 1) / 2)  ) %  1_000_000_007;
-                    }
-                    else { 
-                        multiplierCounter +=( fx * fy * fz ) %  1_000_000_007;
+                        multiplierCounter += (fx * (fx - 1) * (fx - 2) / 6) % 1_000_000_007;
+                    } else if (x == y && y < z) {
+                        multiplierCounter += ((fx * (fx - 1) / 2) * fz) % 1_000_000_007;
+                    } else if (x < y && y == z) {
+                        multiplierCounter += (fx * (fy * (fy - 1) / 2)) % 1_000_000_007;
+                    } else {
+                        multiplierCounter += (fx * fy * fz) % 1_000_000_007;
                     }
 
-
-                    System.out.println("SUMA TOTAL "+multiplierCounter);
-                 //   multiplierCounter = 0;
+                    System.out.println("SUMA TOTAL " + multiplierCounter);
+                    // multiplierCounter = 0;
 
                 }
 
@@ -1775,152 +1775,156 @@ public class App {
         return (int) multiplierCounter % 1_000_000_007;
     }
 
-
-    
-    /**Aprendetelo para resolver los subsiguientes, sin letras son los más fáciles */
-    public static List<List<Integer>> permute(int[] nums){
+    /**
+     * Aprendetelo para resolver los subsiguientes, sin letras son los más fáciles
+     */
+    public static List<List<Integer>> permute(int[] nums) {
 
         List<List<Integer>> result = new ArrayList<>();
 
         int[] recursiveCounterByLevel = new int[nums.length];
-        Arrays.fill(recursiveCounterByLevel,0);
+        Arrays.fill(recursiveCounterByLevel, 0);
 
         result.add(Arrays.stream(nums).boxed().collect(Collectors.toList()));
 
-        /**Algorithm: 
+        /**
+         * Algorithm:
+         * 
+         * The algorithm generates (n-1)! permutations of the first n-1 elements,
+         * adjoining the last element to each of these.
+         * This will generate all of the permutations that end with the last element.
+         * If n is odd, swap the first and last element and if n is even,
+         * then swap the ith element (i is the counter starting from 0)
+         * and the last element and repeat the above algorithm till i is less than n.
+         * In each iteration, the algorithm will produce
+         * all the permutations that end with the current last element.
+         */
 
-        The algorithm generates (n-1)! permutations of the first n-1 elements, 
-        adjoining the last element to each of these. 
-        This will generate all of the permutations that end with the last element.
-        If n is odd, swap the first and last element and if n is even, 
-        then swap the ith element (i is the counter starting from 0) 
-        and the last element and repeat the above algorithm till i is less than n.
-        In each iteration, the algorithm will produce 
-        all the permutations that end with the current last element. */
-
-        int i=0;
-        while(i<nums.length){
-            System.out.println("level "+i+" "+Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
-            if(recursiveCounterByLevel[i] <i){
-                /**Comienza el swapping */
-                if(i%2 == 0){
+        int i = 0;
+        while (i < nums.length) {
+            System.out.println("level " + i + " "
+                    + Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
+            if (recursiveCounterByLevel[i] < i) {
+                /** Comienza el swapping */
+                if (i % 2 == 0) {
                     int elem = nums[i];
                     nums[i] = nums[0];
-                    nums[0] = elem; /**Swapea el elemento 0 con el último */
-                    
-                }else{
+                    nums[0] = elem; /** Swapea el elemento 0 con el último */
+
+                } else {
                     int elem = nums[recursiveCounterByLevel[i]];
                     nums[recursiveCounterByLevel[i]] = nums[i];
-                    nums[i] = elem; /**Swapea el elemento 0 con el último */
+                    nums[i] = elem; /** Swapea el elemento 0 con el último */
                 }
 
                 result.add(Arrays.stream(nums).boxed().collect(Collectors.toList()));
 
                 recursiveCounterByLevel[i]++;
-                i=0;
+                i = 0;
 
-              //  System.out.println(result.toString()+" asd");
-            }else{
+                // System.out.println(result.toString()+" asd");
+            } else {
                 recursiveCounterByLevel[i] = 0;
                 i++;
-             //   System.out.println(result.toString()+" bsd");
+                // System.out.println(result.toString()+" bsd");
             }
         }
-        
-         System.out.println("level  "+Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
+
+        System.out.println(
+                "level  " + Arrays.stream(recursiveCounterByLevel).boxed().collect(Collectors.toList()).toString());
         return result;
 
     }
 
     public static List<List<Integer>> subsetsWithDup(int[] nums) {
         Set<List<Integer>> output = new LinkedHashSet<>();
-        int i=0,j=0;
+        int i = 0, j = 0;
 
         int[] recursiveC = new int[nums.length];
-        Arrays.fill(recursiveC,0);
+        Arrays.fill(recursiveC, 0);
 
-        if(nums.length>0)output.add(new ArrayList<>()); // se añade el vacio por regla
+        if (nums.length > 0)
+            output.add(new ArrayList<>()); // se añade el vacio por regla
 
-
-
-        while(i<nums.length){
+        while (i < nums.length) {
             List<Integer> pivotLister = new ArrayList<>();
 
             recursiveC[i] = 1;
 
-           // pivotLister.add(nums[i]);
+            // pivotLister.add(nums[i]);
 
             System.out.println(Arrays.stream(recursiveC).boxed().collect(Collectors.toList()));
-            while(j<nums.length){
-               // pivotLister.add(nums[i]);
-                if(recursiveC[j]!=1){
+            while (j < nums.length) {
+                // pivotLister.add(nums[i]);
+                if (recursiveC[j] != 1) {
                     pivotLister.add(nums[j]);
-                //    output.add(new ArrayList<>());
-                    //output.add(new ArrayList<>(pivotLister));
+                    // output.add(new ArrayList<>());
+                    // output.add(new ArrayList<>(pivotLister));
                 }
-                //pivotLister.clear();
+                // pivotLister.clear();
                 j++;
             }
 
             output.add(new ArrayList<>(pivotLister));
             recursiveC[i] = 0;
             i++;
-            j=0;
+            j = 0;
         }
 
         return output.stream().collect(Collectors.toList());
-     } 
+    }
 
-     public static String zigZagConversion(String s, int numRows){
+    public static String zigZagConversion(String s, int numRows) {
         if (numRows <= 1) {
             return s;
         }
 
-        Queue<Character> helperPush = new LinkedList<>(s.chars().mapToObj(e->Character.valueOf((char)e)).collect(Collectors.toList()));
+        Queue<Character> helperPush = new LinkedList<>(
+                s.chars().mapToObj(e -> Character.valueOf((char) e)).collect(Collectors.toList()));
         List<List<Character>> prueba = new ArrayList<>();
 
-        String h="";
-        int i=0,j=0;
-        String newStr="";
+        String h = "";
+        int i = 0, j = 0;
+        String newStr = "";
 
         Set<Character> builderStr = new LinkedHashSet<>();
         List<Character> builderStrOdd = new ArrayList<>();
 
-        int k=0;
+        int k = 0;
 
         int maxLength = Integer.MIN_VALUE;
-        while(helperPush.size()>1){
-            h+=String.valueOf(helperPush.poll());
+        while (helperPush.size() > 1) {
+            h += String.valueOf(helperPush.poll());
 
-            if(h.length() == numRows){
-                List<Character> adder = h.chars().mapToObj(e->(char)e).toList();
-                maxLength=Math.max(maxLength, adder.size());
+            if (h.length() == numRows) {
+                List<Character> adder = h.chars().mapToObj(e -> (char) e).toList();
+                maxLength = Math.max(maxLength, adder.size());
                 prueba.add(adder);
-                
-                h=h.substring(h.length()-1,h.length());
+
+                h = h.substring(h.length() - 1, h.length());
             }
         }
 
-        h+=String.valueOf(helperPush.poll());
- System.out.println(prueba.toString());
-       
-        List<Character> adder = h.chars().mapToObj(e->(char)e).toList();
-        prueba.add(adder);
-        
-        maxLength=Math.max(maxLength, adder.size());
+        h += String.valueOf(helperPush.poll());
+        System.out.println(prueba.toString());
 
-        while(i<prueba.size()){
-            
-            if(i%2 !=0){
+        List<Character> adder = h.chars().mapToObj(e -> (char) e).toList();
+        prueba.add(adder);
+
+        maxLength = Math.max(maxLength, adder.size());
+
+        while (i < prueba.size()) {
+
+            if (i % 2 != 0) {
                 List<Character> piv = new ArrayList<>(prueba.get(i));
-               // piv.set(0, '-');
-               List<Character> piv2 = new ArrayList<>();
-               
-               if(piv.size()<maxLength){
+                // piv.set(0, '-');
+                List<Character> piv2 = new ArrayList<>();
+
+                if (piv.size() < maxLength) {
                     piv2.add('-');
 
-                    //piv2.addAll(piv);
-               }
+                    // piv2.addAll(piv);
+                }
                 Collections.reverse(piv);
 
                 piv2.addAll(piv);
@@ -1931,51 +1935,49 @@ public class App {
         }
 
         System.out.println(prueba.toString());
-        while(newStr.length()<s.length()){
+        while (newStr.length() < s.length()) {
             List<Character> piv = new ArrayList<>(prueba.get(j));
-            if(piv.size()>0){
-                if(k%2!=0){
+            if (piv.size() > 0) {
+                if (k % 2 != 0) {
                     builderStrOdd.add(piv.get(0));
-                }else{
+                } else {
                     builderStr.add(piv.get(0));
                 }
-                //newStr+=piv.get(0);
-                piv.remove(0); //remove the head
+                // newStr+=piv.get(0);
+                piv.remove(0); // remove the head
                 prueba.set(j, piv);
             }
 
             j++;
 
-            if(j>=prueba.size()){
-                newStr+= k%2 == 0 ? builderStr.stream().map(e->String.valueOf(e)).collect(Collectors.joining()) 
-                    : builderStrOdd.stream().map(e->String.valueOf(e)).collect(Collectors.joining());
-        //      System.out.println(newStr);
-                j=0;
+            if (j >= prueba.size()) {
+                newStr += k % 2 == 0 ? builderStr.stream().map(e -> String.valueOf(e)).collect(Collectors.joining())
+                        : builderStrOdd.stream().map(e -> String.valueOf(e)).collect(Collectors.joining());
+                // System.out.println(newStr);
+                j = 0;
                 k++;
                 builderStr.clear();
                 builderStrOdd.clear();
             }
         }
-        
 
         return newStr.replace("-", "");
-     }
+    }
 
     /* Del pdf llevo dia 1, 2, 4,8 */
 
+    public static void printNumbers() {
+        int[] counts = { 0, 0, 0, 0 };
 
-    public static void printNumbers(){
-        int[] counts = {0,0,0,0};
+        int i = counts.length - 1, j = counts.length - 1;
 
-        int i=counts.length-1,j=counts.length-1;
-
-        while(counts[0] !=9){
-            System.out.println("i "+i);
-            if(counts[i] == 9){
+        while (counts[0] != 9) {
+            System.out.println("i " + i);
+            if (counts[i] == 9) {
                 int aux = i;
 
-                while(aux<counts.length){
-                    if(counts[aux] == 9){
+                while (aux < counts.length) {
+                    if (counts[aux] == 9) {
                         counts[aux] = 0;
                     }
                     aux++;
@@ -1983,167 +1985,189 @@ public class App {
 
                 i--;
                 counts[i]++;
-            }else{
-                counts[i] ++;
-              //  System.out.println("YALXXX "+" "+counts[i]);
+            } else {
+                counts[i]++;
+                // System.out.println("YALXXX "+" "+counts[i]);
             }
 
-
             int auxPrint = 0;
-            while (auxPrint <counts.length) {
-                System.out.print(counts[auxPrint]+"<");
+            while (auxPrint < counts.length) {
+                System.out.print(counts[auxPrint] + "<");
                 auxPrint++;
             }
 
             System.out.println();
-            i=counts.length-1;
+            i = counts.length - 1;
         }
-        
+
     }
 
     public static int myAtoi(String s) {
-        int result= 0;
+        int result = 0;
 
         String concatter = "";
-        Queue<Character> cleansedOutput = new LinkedList<>(s.trim().chars().mapToObj(r->Character.valueOf((char)r)).collect(Collectors.toList()));
-        int state=0; // estado del automata
+        Queue<Character> cleansedOutput = new LinkedList<>(
+                s.trim().chars().mapToObj(r -> Character.valueOf((char) r)).collect(Collectors.toList()));
+        int state = 0; // estado del automata
 
-        Set<Character> charsProhibited = new HashSet<>(List.of('.',' ','+','-')); // filtros para el estado dos
+        Set<Character> charsProhibited = new HashSet<>(List.of('.', ' ', '+', '-')); // filtros para el estado dos
 
         Character current = null;
 
-        while(cleansedOutput.size()>0){
+        while (cleansedOutput.size() > 0) {
             current = cleansedOutput.poll(); // obten la primera letra;
 
-            if(Character.isLetter(current)) break; // si detectas cualquier letra en el ciclo, ya no concatenes nada, lo cortas
-         //   if(charsProhibited.contains(current) && state >0) break;
+            if (Character.isLetter(current))
+                break; // si detectas cualquier letra en el ciclo, ya no concatenes nada, lo cortas
+            // if(charsProhibited.contains(current) && state >0) break;
 
-            if(state == 0){ // en el primer estado tu esperas solo el -
-                if(current == '-' || current == '+'){
-                    concatter+=String.valueOf(current); // concatena el simbolo de menos
+            if (state == 0) { // en el primer estado tu esperas solo el -
+                if (current == '-' || current == '+') {
+                    concatter += String.valueOf(current); // concatena el simbolo de menos
                     state = 1; // como ya tienes un simbolo, pasa al siguiente estado
-                }else if(Character.isDigit(current)){
-                    if(current !='0'){
-                        concatter+=String.valueOf(current); // si en el estado 0 encuentras un número, saltate a validar al estado 2
+                } else if (Character.isDigit(current)) {
+                    if (current != '0') {
+                        concatter += String.valueOf(current); // si en el estado 0 encuentras un número, saltate a
+                                                              // validar al estado 2
                         state = 2;
-                    }else{
-                        state=1;
+                    } else {
+                        state = 1;
                     }
-                }else{
-                    concatter="";
+                } else {
+                    concatter = "";
                     break; //
                 }
-            }else if(state == 1){ // si en el estado 1 validas puros ceros, omite esos leading ceros en el cocatenado
-                if(charsProhibited.contains(current)){
+            } else if (state == 1) { // si en el estado 1 validas puros ceros, omite esos leading ceros en el
+                                     // cocatenado
+                if (charsProhibited.contains(current)) {
                     concatter = "";
                     break;
                 }
-                if(current != '0' && Character.isDigit(current)){ // si es diferente a 0 y no es letra, saltate al 2 para validad números
-                    concatter+=String.valueOf(current);
+                if (current != '0' && Character.isDigit(current)) { // si es diferente a 0 y no es letra, saltate al 2
+                                                                    // para validad números
+                    concatter += String.valueOf(current);
                     state = 2;
-                }else{
+                } else {
                     state = 1;
                 }
-            }else{ // en este estado solo evaluas números
-                if(charsProhibited.contains(current)) break;
-                if(Character.isDigit(current)) concatter+=String.valueOf(current);
+            } else { // en este estado solo evaluas números
+                if (charsProhibited.contains(current))
+                    break;
+                if (Character.isDigit(current))
+                    concatter += String.valueOf(current);
             }
 
-            
         }
 
-        System.out.println(concatter+" resultado" +state+" "+current);
-        //}
+        System.out.println(concatter + " resultado" + state + " " + current);
+        // }
 
-        if(concatter.length() == 0) return 0;
-        if(state == 0 && Character.isLetter(current)){
+        if (concatter.length() == 0)
+            return 0;
+        if (state == 0 && Character.isLetter(current)) {
             concatter = "";
             return 0;
         }
-        if(state==1 && (charsProhibited.contains(current) || Character.isLetter(current))) return 0;
-        
-        int trueLength = concatter.charAt(0) == '-' || concatter.charAt(0) == '+' ? concatter.substring(1, concatter.length()).length() : concatter.length();
+        if (state == 1 && (charsProhibited.contains(current) || Character.isLetter(current)))
+            return 0;
 
-        if(trueLength >10){
-            return Character.isDigit(concatter.charAt(0))  ? Integer.MAX_VALUE : ( concatter.charAt(0) == '-' ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+        int trueLength = concatter.charAt(0) == '-' || concatter.charAt(0) == '+'
+                ? concatter.substring(1, concatter.length()).length()
+                : concatter.length();
+
+        if (trueLength > 10) {
+            return Character.isDigit(concatter.charAt(0)) ? Integer.MAX_VALUE
+                    : (concatter.charAt(0) == '-' ? Integer.MIN_VALUE : Integer.MAX_VALUE);
         }
 
         result = (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, Long.parseLong(concatter)));
         return result;
     }
 
-     public static boolean isPalindrome(int x) {
-        if(x<0) return false;
-        int limitCalculation = (int)Math.log10(x)+1; // formula que te da las veces para dividir un número y sacar el decimal   
+    public static boolean isPalindrome(int x) {
+        if (x < 0)
+            return false;
+        int limitCalculation = (int) Math.log10(x) + 1; // formula que te da las veces para dividir un número y sacar el
+                                                        // decimal
         Double numberParsedForCalc = Double.valueOf((x));
 
-        int i=0;
+        int i = 0;
         int position = 0;
 
         List<Integer> aux = new ArrayList<>();
 
-        while(i<limitCalculation){
-            position = (int) Math.floor(numberParsedForCalc) %10;
-            numberParsedForCalc = numberParsedForCalc /10;
+        while (i < limitCalculation) {
+            position = (int) Math.floor(numberParsedForCalc) % 10;
+            numberParsedForCalc = numberParsedForCalc / 10;
             aux.add(position);
             i++;
         }
 
-        /**Que pendejez wey, si ya lo andas leyendo de atras jajaja, pero bueh, lei este consejo de reddit, alch no lo pensé asi  */
+        /**
+         * Que pendejez wey, si ya lo andas leyendo de atras jajaja, pero bueh, lei este
+         * consejo de reddit, alch no lo pensé asi
+         */
         List<Integer> reversedAux = new ArrayList<>(aux);
         Collections.reverse(reversedAux);
 
-        return reversedAux.hashCode() == aux.hashCode() ? true: false;
+        return reversedAux.hashCode() == aux.hashCode() ? true : false;
     }
 
     public static int reverse(int x) {
-        if(x == Integer.MAX_VALUE || x == Integer.MIN_VALUE) return 0;
-        int limitCalculation = x>0 ? (int)Math.log10(x)+1 : (int)Math.log10(x*-1)+1; // formula que te da las veces para dividir un número y sacar el decimal   
-        Double numberParsedForCalc = x>0 ? Double.valueOf((x)) : Double.valueOf((x*-1));
+        if (x == Integer.MAX_VALUE || x == Integer.MIN_VALUE)
+            return 0;
+        int limitCalculation = x > 0 ? (int) Math.log10(x) + 1 : (int) Math.log10(x * -1) + 1; // formula que te da las
+                                                                                               // veces para dividir un
+                                                                                               // número y sacar el
+                                                                                               // decimal
+        Double numberParsedForCalc = x > 0 ? Double.valueOf((x)) : Double.valueOf((x * -1));
 
         System.out.println(numberParsedForCalc);
 
-      System.out.println(limitCalculation+" dddd");
+        System.out.println(limitCalculation + " dddd");
 
-        int i=0;
+        int i = 0;
         int position = 0;
 
         int concatter = 0;
 
         boolean limited = false;
 
-        while(i<limitCalculation){
-            position = (int) Math.floor(numberParsedForCalc) %10;
+        while (i < limitCalculation) {
+            position = (int) Math.floor(numberParsedForCalc) % 10;
 
-            numberParsedForCalc = numberParsedForCalc /10;
+            numberParsedForCalc = numberParsedForCalc / 10;
 
-            concatter=concatter*10 + position;
+            concatter = concatter * 10 + position;
             System.out.println(concatter);
 
-            if(concatter>Integer.MAX_VALUE || (concatter > (int)(Double.valueOf(Integer.MAX_VALUE)/10 /10/10/10/10 ) && i ==4 && limitCalculation == 10)){
-              //  System.out.println("EHNTRA?");
+            if (concatter > Integer.MAX_VALUE
+                    || (concatter > (int) (Double.valueOf(Integer.MAX_VALUE) / 10 / 10 / 10 / 10 / 10) && i == 4
+                            && limitCalculation == 10)) {
+                // System.out.println("EHNTRA?");
                 limited = true;
                 break;
             }
 
-           
-          //  aux.add(position);
+            // aux.add(position);
             i++;
         }
 
         System.out.println(concatter);
 
-        if(!limited && x<0){
-            concatter = concatter*-1;
+        if (!limited && x < 0) {
+            concatter = concatter * -1;
         }
         return limited ? 0 : concatter;
     }
 
-
     /** 0,0 , 0,1 - 0,2 */
 
-    /**De haber sabido que solo abarcaba las primeras letras, pero leetcode luego se cotiza. Para ser un starterr que
-     * lleva 2 meses de su vida leetcodeando, no está mal por más larga que alla diseñado la solucion
+    /**
+     * De haber sabido que solo abarcaba las primeras letras, pero leetcode luego se
+     * cotiza. Para ser un starterr que
+     * lleva 2 meses de su vida leetcodeando, no está mal por más larga que alla
+     * diseñado la solucion
      */
     public static String longestCommonPrefix(String[] strs) {
         HashMap<Integer, HashSet<String>> prefixCounter = new HashMap<>();
@@ -2151,25 +2175,26 @@ public class App {
         boolean sequential = false;
         String helper = "";
 
-        Optional<Integer> minSize = Arrays.asList(strs).stream().map(e->e.length()).min(Comparator.naturalOrder());
+        Optional<Integer> minSize = Arrays.asList(strs).stream().map(e -> e.length()).min(Comparator.naturalOrder());
 
-        if(!minSize.isPresent()) return ""; //casos vacios
+        if (!minSize.isPresent())
+            return ""; // casos vacios
 
         int subsSlice = minSize.get();
 
         for (String stringToSplit : strs) {
-           /// substrings.add();
-            String checkerPerElem = stringToSplit.substring(0,subsSlice);
+            /// substrings.add();
+            String checkerPerElem = stringToSplit.substring(0, subsSlice);
             int temp = 0;
 
-             while(temp<checkerPerElem.length()){
-              //  System.out.println(checkerPerElem.charAt(temp));
-                if(!prefixCounter.containsKey(temp)){
+            while (temp < checkerPerElem.length()) {
+                // System.out.println(checkerPerElem.charAt(temp));
+                if (!prefixCounter.containsKey(temp)) {
                     HashSet<String> tempArr = new HashSet<>();
                     tempArr.add(String.valueOf(checkerPerElem.charAt(temp)));
                     prefixCounter.put(temp, new HashSet<>(tempArr));
-                }else{
-                    //System.out.println(checkerPerElem.charAt(temp)+" existe "+temp);
+                } else {
+                    // System.out.println(checkerPerElem.charAt(temp)+" existe "+temp);
                     HashSet<String> tempArr = prefixCounter.get(temp);
                     tempArr.add(String.valueOf(checkerPerElem.charAt(temp)));
                     prefixCounter.put(temp, new HashSet<>(tempArr));
@@ -2186,126 +2211,338 @@ public class App {
 
         int c = 0;
 
-        while(c<prefixCounter.size()){
-            if( prefixCounter.get(c).size() ==1){
-                if(!sequential && c==0){
+        while (c < prefixCounter.size()) {
+            if (prefixCounter.get(c).size() == 1) {
+                if (!sequential && c == 0) {
                     sequential = true;
                 }
-                if(sequential){
-                    helper +=  prefixCounter.get(c).iterator().next(); // como es set para evitar duplicados usate el next del iterator
+                if (sequential) {
+                    helper += prefixCounter.get(c).iterator().next(); // como es set para evitar duplicados usate el
+                                                                      // next del iterator
                 }
-                
-            }else{
-               if(sequential){
+
+            } else {
+                if (sequential) {
                     maximumLength.putIfAbsent(helper.length(), helper);
-                    helper="";
+                    helper = "";
                     sequential = false;
-                    break; //porque solo debe corresponder a las primerasd letras péro leetcode siempre pone sus testcases ambiguos
-               }
+                    break; // porque solo debe corresponder a las primerasd letras péro leetcode siempre
+                           // pone sus testcases ambiguos
+                }
             }
             c++;
         }
 
-        /**DCon este snippet comentado, System.out.println(longestCommonPrefix(new String[]{"flower","fkow"})+" respuesta"); este test case
+        /**
+         * DCon este snippet comentado, System.out.println(longestCommonPrefix(new
+         * String[]{"flower","fkow"})+" respuesta"); este test case
          * te devuelve el true, lo pensé para indexes en comun
          */
-        /* for (int i = 0; i < prefixCounter.size(); i++) {
-            if( prefixCounter.get(i).size() ==1){
-                if(!sequential){
-                    sequential = true;
-                }
-                if(sequential){
-                    helper +=  prefixCounter.get(i).iterator().next(); // como es set para evitar duplicados usate el next del iterator
-                }
-                
-            }else{
-               if(sequential){
-                    maximumLength.putIfAbsent(helper.length(), helper);
-                    helper="";
-                    sequential = false;
-               }
-            }
-        } */
+        /*
+         * for (int i = 0; i < prefixCounter.size(); i++) {
+         * if( prefixCounter.get(i).size() ==1){
+         * if(!sequential){
+         * sequential = true;
+         * }
+         * if(sequential){
+         * helper += prefixCounter.get(i).iterator().next(); // como es set para evitar
+         * duplicados usate el next del iterator
+         * }
+         * 
+         * }else{
+         * if(sequential){
+         * maximumLength.putIfAbsent(helper.length(), helper);
+         * helper="";
+         * sequential = false;
+         * }
+         * }
+         * }
+         */
         maximumLength.putIfAbsent(helper.length(), helper);
         prefixCounter.clear();
 
         System.out.println(maximumLength.toString());
-        return maximumLength.size()>0 ? (maximumLength.entrySet().iterator().next().getValue().isEmpty() ? "" : maximumLength.entrySet().iterator().next().getValue()) : "";
- 
+        return maximumLength.size() > 0 ? (maximumLength.entrySet().iterator().next().getValue().isEmpty() ? ""
+                : maximumLength.entrySet().iterator().next().getValue()) : "";
+
     }
 
+    public static int[] twoSum(int[] nums, int target) {
+        int[] results = new int[2];
+
+        HashMap<Integer, Queue<Integer>> indexSaver = new HashMap<>();
+        Set<Integer> complementSearcher = new HashSet<>(Arrays.stream(nums).boxed().collect(Collectors.toSet()));
+
+        for (int i = 0; i < nums.length; i++) {
+            Queue<Integer> tempArr = new LinkedList<>();
+            if (!indexSaver.containsKey(nums[i])) {
+                tempArr.add(i);
+                indexSaver.put(nums[i], new LinkedList<>(tempArr));
+            } else {
+                tempArr.addAll(indexSaver.get(nums[i]));
+                tempArr.add(i);
+                indexSaver.put(nums[i], new LinkedList<>(tempArr));
+            }
+        }
+
+        // System.out.println(indexSaver.toString());
+
+        int i = 0;
+        while (i < nums.length) {
+            int complement = target - nums[i];
+
+            if (complement != nums[i]) {
+                if (complementSearcher.contains(complement)) {
+                    results[0] = i;
+                    results[1] = indexSaver.get(complement).poll(); // remueve uno o más indices dependiendo de si hay
+                                                                    // números duplicados
+                    break;
+                }
+            } else {
+                if (complementSearcher.contains(complement) && indexSaver.get(complement).size() > 1) {
+                    results[0] = indexSaver.get(complement).poll(); // remueve uno o más indices dependiendo de si hay
+                                                                    // números duplicados
+                    results[1] = indexSaver.get(complement).poll();
+                    break;
+                }
+            }
+
+            i++;
+        }
+
+        /*
+         * for (Integer integer : results) {
+         * System.out.print(integer);
+         * }
+         * System.out.println();
+         */
+        // System.out.println(complementSearcher.toString());
+
+        return results;
+    }
+
+    static class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode() {
+        }
+
+        ListNode(int val) {
+            this.val = val;
+        }
+
+        ListNode(int val, ListNode next) {
+            this.val = val;
+            this.next = next;
+        }
+
+        public String toString(){
+            return "OBJ "+val;
+        }
+
+    }
+
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode resultSum = null;
+        ListNode c1 = l1,c2 = l2;
+        BigInteger numOne = new BigInteger("0"),numTwo = new BigInteger("0");
+        Stack<Integer> c1Reverse = new Stack(),c2Reverse = new Stack();
+
+        while (c1 !=null) {
+            c1Reverse.push(c1.val);
+            c1 = c1.next;
+        }
+
+        while(c2 !=null){
+            c2Reverse.push(c2.val);
+            c2 = c2.next;
+        }
+
+    //    System.out.println("ESTADO DE LAS PILAS "+c1Reverse.toString()+" "+c2Reverse.toString());
+
+        while(c1Reverse.size() >0){
+          numOne = new BigInteger(String.valueOf(numOne).concat(String.valueOf(c1Reverse.pop())));
+        }
+
+        while(c2Reverse.size() >0){
+          numTwo = new BigInteger(String.valueOf(numTwo).concat(String.valueOf(c2Reverse.pop())) );
+         
+        }
+
+        String resultToTransform = String.valueOf(numOne.add(numTwo) ); // de 807 tienes que convertirlo a 708, como lo logras
+
+        int cc = 0;
+
+        
+        while(cc<resultToTransform.length()){
+            ListNode tempNode = new ListNode();
+            int charNum = resultToTransform.charAt(cc) - '0'; //conviertelo a número
+            tempNode.val = charNum;
+
+            if(resultSum ==null){
+                tempNode.next = null;
+                resultSum = tempNode;
+            }else{
+                tempNode.next = resultSum;
+                resultSum = tempNode;
+            }
+            cc++;
+        }
+
+        return resultSum;
+    }
 
     public static void main(String[] args) throws InterruptedException {
-      //  System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"}));
 
-  /*       System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"})+" respuesta"); 
-        System.out.println(longestCommonPrefix(new String[]{"rowdynas","rowpynas","rowllbynas"})+" respuesta");
-        System.out.println(longestCommonPrefix(new String[]{"a", "aca", "accb", "b"})+" respuesta");
-        System.out.println(longestCommonPrefix(new String[]{"iflower","flow","flight"})+" RESPUESTA");
-        System.out.println(longestCommonPrefix(new String[]{"c","acc","ccc"}));
-        System.out.println(longestCommonPrefix(new String[]{"reflower","flow","flight"})+" respuesta"); 
+        ListNode c1 = new ListNode();
 
-        System.out.println(longestCommonPrefix(new String[]{"dog","racecar","car"})+" respuesta"); */
-        System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"}));
-        System.out.println(longestCommonPrefix(new String[]{"a"})+" respuesta");
-        System.out.println(longestCommonPrefix(new String[]{"flower","fkow"})+" respuesta");
-        System.out.println(longestCommonPrefix(new String[]{"aca","cba"})+" respuesta");
-      //  System.out.println(longestCommonPrefix(new String[]{"radosadasdadasdasdasdasdasdadasdasdasaddddddddddddddg","racasadasdasdasdasdasdasdasdcxcvzxccsddssczxcsdfcsdcsdcsdcsdcddcdscecar","racar","raracacar"}));
-/* 
-         System.out.println((int)(Double.valueOf(Integer.MAX_VALUE)/10 /10/10/10/10 )+" "+Integer.MIN_VALUE+" >>>"+Integer.MAX_VALUE);
-        System.out.println(reverse(1563847412));
+        c1.val = 2;
+        c1.next = new ListNode();
+        c1.next.val = 4;
+        c1.next.next = new ListNode();
+        c1.next.next.val = 3;
+
+     /*    ListNode c2 = c1;
+        while (c2 != null) {
+            System.out.println(c2.toString());
+            // System.out.println(c2.next.toString());
+            c2 = c2.next;
+        }
  */
-   /*      System.out.println((int)Math.log10(121)+1);
+        ListNode c3 = new ListNode();
 
-        System.out.println((int)Math.floor(121.0) % 10 ); */
+        c3.val = 5;
+        c3.next = new ListNode();
+        c3.next.val = 6;
+        c3.next.next = new ListNode();
+        c3.next.next.val = 4;
 
- /*        List<Integer> aux = new ArrayList<>();
-
-        aux.add(1);
-        aux.add(2);
-        aux.add(1);
-        List<Integer> aux2 = new ArrayList<>();
-        aux2.add(1);
-        aux2.add(2);
-        aux2.add(1);
+       /*  ListNode c4 = c3;
+        while (c4 != null) {
+            System.out.println(c3.toString());
+            c4 = c4.next;
+        }
  */
-     //   System.out.println(aux.hashCode() == aux2.hashCode());
-//
-       // System.out.println(isPalindrome(12221));
-       /*  System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
 
-        System.out.println(myAtoi("-42"));
-        System.out.println(myAtoi("-0000000000042"));
-        System.out.println(myAtoi("                                   -042"));
-        System.out.println(myAtoi("42"));
-        System.out.println(myAtoi("133c111"));
-        System.out.println(myAtoi("                         0-1"));
-        System.out.println(myAtoi("-+12"));
-        System.out.println(myAtoi("+-12"));
-        System.out.println(myAtoi("+12"));
-        System.out.println(myAtoi("-"));
-        System.out.println(myAtoi("+1"));
-        System.out.println(myAtoi("    +0a32"));
-        System.out.println(myAtoi("words and 987"));
-        System.out.println(myAtoi("20000000000000000000"));
-        System.out.println(myAtoi(".1"));
-        System.out.println(myAtoi("  0000000000012345678")); */
+       ListNode temp = addTwoNumbers(c1, c3);
 
-      /*   printNumbers();
-        System.out.println(zigZagConversion("ABCD", 2));
- */
-/* 
-         int[] nums = {1,2,2,3};
+       while (temp !=null) {
+        System.out.println(temp.val);
+        temp = temp.next;
+       }
 
-        System.out.println(subsetsWithDup(nums));  */
-       /*   int[] nums = {6,3,2,7,4,-1};
+       BigInteger r1 = new BigInteger("1000000000000000000000000000001");
+       BigInteger r2 = new BigInteger("1000000000000000000000000000001");
 
+      BigInteger res1 = r1.add(r2);
 
-        System.out.println(permute(nums)); */
- 
-      /*     int[] arrs = {16,51,36,29,84,80,46,97,84,16};
-        int target = 171;  
-        System.out.println(threeSumMulti(arrs, target)); */
+       System.out.println(r1+" "+r2+" "+r1.add(r2));
+
+        /** AQUI ESTÁ LÑA APLICACION DE ESTOS METODOS PARA PODERFT AOCIKASOFO O */
+
+        /*
+         * System.out.println(twoSum(new int[]{2,7,11,15}, 9));
+         * System.out.println(twoSum(new int[]{3,2,4}, 6));
+         * System.out.println(twoSum(new int[]{3,3}, 6));
+         */
+        // System.out.println(longestCommonPrefix(new
+        // String[]{"flower","flow","flight"}));
+
+        /*
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"flower","flow","flight"})+" respuesta");
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"rowdynas","rowpynas","rowllbynas"})+" respuesta");
+         * System.out.println(longestCommonPrefix(new String[]{"a", "aca", "accb",
+         * "b"})+" respuesta");
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"iflower","flow","flight"})+" RESPUESTA");
+         * System.out.println(longestCommonPrefix(new String[]{"c","acc","ccc"}));
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"reflower","flow","flight"})+" respuesta");
+         * 
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"dog","racecar","car"})+" respuesta");
+         */
+        /*
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"flower","flow","flight"}));
+         * System.out.println(longestCommonPrefix(new String[]{"a"})+" respuesta");
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"flower","fkow"})+" respuesta");
+         * System.out.println(longestCommonPrefix(new
+         * String[]{"aca","cba"})+" respuesta");
+         */
+        // System.out.println(longestCommonPrefix(new
+        // String[]{"radosadasdadasdasdasdasdasdadasdasdasaddddddddddddddg","racasadasdasdasdasdasdasdasdcxcvzxccsddssczxcsdfcsdcsdcsdcsdcddcdscecar","racar","raracacar"}));
+        /*
+         * System.out.println((int)(Double.valueOf(Integer.MAX_VALUE)/10 /10/10/10/10
+         * )+" "+Integer.MIN_VALUE+" >>>"+Integer.MAX_VALUE);
+         * System.out.println(reverse(1563847412));
+         */
+        /*
+         * System.out.println((int)Math.log10(121)+1);
+         * 
+         * System.out.println((int)Math.floor(121.0) % 10 );
+         */
+
+        /*
+         * List<Integer> aux = new ArrayList<>();
+         * 
+         * aux.add(1);
+         * aux.add(2);
+         * aux.add(1);
+         * List<Integer> aux2 = new ArrayList<>();
+         * aux2.add(1);
+         * aux2.add(2);
+         * aux2.add(1);
+         */
+        // System.out.println(aux.hashCode() == aux2.hashCode());
+        //
+        // System.out.println(isPalindrome(12221));
+        /*
+         * System.out.println(Integer.MAX_VALUE+" "+Integer.MIN_VALUE);
+         * 
+         * System.out.println(myAtoi("-42"));
+         * System.out.println(myAtoi("-0000000000042"));
+         * System.out.println(myAtoi("                                   -042"));
+         * System.out.println(myAtoi("42"));
+         * System.out.println(myAtoi("133c111"));
+         * System.out.println(myAtoi("                         0-1"));
+         * System.out.println(myAtoi("-+12"));
+         * System.out.println(myAtoi("+-12"));
+         * System.out.println(myAtoi("+12"));
+         * System.out.println(myAtoi("-"));
+         * System.out.println(myAtoi("+1"));
+         * System.out.println(myAtoi("    +0a32"));
+         * System.out.println(myAtoi("words and 987"));
+         * System.out.println(myAtoi("20000000000000000000"));
+         * System.out.println(myAtoi(".1"));
+         * System.out.println(myAtoi("  0000000000012345678"));
+         */
+
+        /*
+         * printNumbers();
+         * System.out.println(zigZagConversion("ABCD", 2));
+         */
+        /*
+         * int[] nums = {1,2,2,3};
+         * 
+         * System.out.println(subsetsWithDup(nums));
+         */
+        /*
+         * int[] nums = {6,3,2,7,4,-1};
+         * 
+         * 
+         * System.out.println(permute(nums));
+         */
+
+        /*
+         * int[] arrs = {16,51,36,29,84,80,46,97,84,16};
+         * int target = 171;
+         * System.out.println(threeSumMulti(arrs, target));
+         */
 
         /*
          * int[] targets = {2,3,1,2,4,3};
