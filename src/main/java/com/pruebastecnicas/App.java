@@ -2358,14 +2358,10 @@ public class App {
 
         char[][] lettersZigZag = null;// n+1 * n para la fila extra pa
 
-        if(numRows % 2 == 0){
-            System.out.println("señxxx");
+        System.out.println();
 
-            lettersZigZag = new char[numRows+1][numRows];
-        }else{
-            lettersZigZag = new char[(numRows*numRows)][numRows];
-        }
-
+        lettersZigZag = new char[s.length()][numRows];
+      
         if (numRows <= 1 || s.length()<=numRows) {
             return s;
         }
@@ -2387,7 +2383,7 @@ public class App {
          */
       System.out.println("tamaño del string "+s.length());
         for (int k = 0; k < lettersZigZag.length; k++) {
-            System.out.println(k+" fase del cponmcatenao");
+        //    System.out.println(k+" fase del cponmcatenao");
             globalChar=k>0 ? globalChar-=1:0; // para poner la letra del último ciclo en la proxima fila invertidamente
             if(k %2 ==0){
                 for (int k2 = 0; k2 < lettersZigZag[0].length; k2++) {
@@ -2415,7 +2411,7 @@ public class App {
 
         for (int k = 0; k < lettersZigZag.length; k++) {
             for (int k2 = 0; k2 < lettersZigZag[0].length; k2++) {
-                System.out.print(lettersZigZag[k][k2]+" "+k);
+                System.out.print(lettersZigZag[k][k2]);
             }
             System.out.println();
         }  
@@ -2438,9 +2434,13 @@ public class App {
 
 
         
-     //   System.out.println(convert("PAYPALISHIRING",4)+" RERSULTADO");
-     //   System.out.println(convert("PAYPALISHIRING",3)+" RERSULTADO");
+        System.out.println(convert("PAYPALISHIRING",4)+" RERSULTADO");
+        System.out.println(convert("PAYPALISHIRING",3)+" RERSULTADO");
         System.out.println(convert("ABCDE",2)+" RERSULTADO");
+
+        System.out.println(convert("ABCDEF",2)+" RERSULTADO");
+
+        System.out.println(convert("PAYPALISHIRING",2)+" RERSULTADO");
         //System.out.println(findMedianSortedArrays(new int[]{1,2}, new int[]{3,4}));
 /* 
         ListNode c1 = new ListNode();
