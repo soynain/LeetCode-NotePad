@@ -340,85 +340,7 @@ public class App {
         return longest;
     }
 
-    public static String convert(String s, int numRows) throws InterruptedException {
-        List<String> substrs = new ArrayList<>();
-
-        int i = 0, j = 0;
-
-        String subConcatter = "", finalStr = "";
-
-        if (numRows <= 1) {
-            return s;
-        }
-
-        while (i < s.length()) {
-            subConcatter += s.charAt(i);
-            if (subConcatter.length() == numRows) {
-                substrs.add(subConcatter);
-                subConcatter = "";
-                if (i != s.length() - 1) {
-                    subConcatter += s.charAt(i);
-                }
-            }
-
-            i++;
-        }
-
-        System.out.println(i - 1);
-
-        StringBuilder sb = new StringBuilder(numRows + subConcatter.length());
-        if ((i - 1) % 2 != 0) {
-            sb.append(subConcatter);
-            for (int k = 0; k < numRows - 2; k++) {
-                sb.append("-");
-            }
-        } else {
-            for (int k = 0; k < numRows - 2; k++) {
-                sb.append("-");
-            }
-            sb.append(subConcatter);
-        }
-
-        substrs.add(sb.toString());
-        List<String> orderedList = new ArrayList<>();
-        orderedList = IntStream
-                .range(0, substrs.size())
-                .mapToObj(d -> d % 2 != 0 || substrs.get(d).length() < numRows
-                        ? new StringBuilder(substrs.get(d)).reverse().toString()
-                        : substrs.get(d))
-                .filter(h -> !(h.isBlank() && h.isEmpty()))
-                .collect(Collectors.toList());
-        System.out.println(orderedList.toString());
-
-        char[] firstPivot = orderedList.get(0).toCharArray();
-        for (int k = 0; k < firstPivot.length; k++) {
-
-            System.out.println(firstPivot[k] + "PRIN");
-            finalStr += firstPivot[k];
-
-            for (int k2 = 1; k2 < orderedList.size(); k2++) {
-                // if (k2%2!=0 && k<4) {
-                System.out.println(orderedList.get(k2) + " index");
-                if (k == firstPivot.length - 1 && (k2 % 2 == 0 || k2 % 2 != 0)) {
-                    System.out.println(orderedList.get(k2).charAt(k));
-                    finalStr += orderedList.get(k2).charAt(k);
-                    // System.out.println(firstPivot[k]+"PRIN");
-                } else {
-                    if ((k == 0 || k == firstPivot.length - 1) && k2 % 2 == 0) {
-                        System.out.println(orderedList.get(k2).charAt(k));
-                        finalStr += orderedList.get(k2).charAt(k);
-                    } else if ((k != 0 && k != firstPivot.length - 1)) {
-                        System.out.println(orderedList.get(k2).charAt(k));
-                        finalStr += orderedList.get(k2).charAt(k);
-                    }
-                }
-
-                // }
-            }
-        }
-        return finalStr.replace("-", "");
-
-    }
+    
 
     public static int numPairsDivisibleBy60(int[] time) {
         int counter = 0;
@@ -2393,15 +2315,141 @@ public class App {
         return resultSum;
     }
 
+    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        double result = 0d;
+
+        int[] generalNums = new int[nums1.length+nums2.length];
+
+        /**Popula el arreglo */
+        for (int i = 0; i < nums1.length; i++) {
+            generalNums[i] = nums1[i];
+        }
+
+        int iterFollow = nums1.length;
+        for (int i = 0; i < nums2.length; i++) {
+            generalNums[iterFollow] = nums2[i];
+            iterFollow++;
+        }
+
+
+        /**Sortea el arreglo en orden natural */
+        Arrays.sort(generalNums);
+
+        int middleOne = 0,middleTwo = 0;
+
+      //  System.out.println(generalNums.length);
+
+        if(generalNums.length %2 == 0){
+            middleOne = (generalNums.length-1) /2;
+            middleTwo = middleOne + 1; //obtenemos el número de la izquierda
+            System.out.println(generalNums[middleOne] +"<<"+ generalNums[middleTwo]);
+            result = (double) (((double) generalNums[middleOne] + (double)generalNums[middleTwo]) / 2);
+        }else{
+            middleOne = (generalNums.length-1) /2;
+            result = generalNums[middleOne];
+        }
+
+        
+        return result;
+    }
+
+    public static String convert(String s, int numRows) throws InterruptedException {
+        String finalStr = "";
+
+        char[][] lettersZigZag = null;// n+1 * n para la fila extra pa
+
+        if(numRows % 2 == 0){
+            System.out.println("señxxx");
+
+            lettersZigZag = new char[numRows+1][numRows];
+        }else{
+            lettersZigZag = new char[(numRows*numRows)][numRows];
+        }
+
+        if (numRows <= 1 || s.length()<=numRows) {
+            return s;
+        }
+        
+        int globalChar = 0;
+
+
+        /**La idea con este approach es concatenar esto =
+         * 
+         * 
+         * PINALSIGYAHRPI
+            [
+                [P, A, Y, P], 
+                [I, L, A, -], 
+                [-, S, H, I], 
+                [N, I, R, -], 
+                [-, G, -, -]
+            ]
+         */
+      System.out.println("tamaño del string "+s.length());
+        for (int k = 0; k < lettersZigZag.length; k++) {
+            System.out.println(k+" fase del cponmcatenao");
+            globalChar=k>0 ? globalChar-=1:0; // para poner la letra del último ciclo en la proxima fila invertidamente
+            if(k %2 ==0){
+                for (int k2 = 0; k2 < lettersZigZag[0].length; k2++) {
+                    if(globalChar<s.length()){
+                        lettersZigZag[k][k2] = k2 == 0 && k>0 ? '-' : s.charAt(globalChar);
+                        globalChar++;
+                    }else{
+                        lettersZigZag[k][k2] = '-';
+                    }
+                }
+            }else{
+          //      System.out.println(k+" fase del cponmcatenao");
+                for (int k3 = lettersZigZag[0].length-1; k3 >=0; k3--) {
+                    if(globalChar<s.length()){
+                        lettersZigZag[k][k3] =  k3 == lettersZigZag[0].length-1  && k>0? '-' : s.charAt(globalChar);
+                        globalChar++;
+                    }else{
+                        lettersZigZag[k][k3] = '-';
+                    }
+                }
+            }
+        }
+
+        System.out.println(globalChar+" "+lettersZigZag.length+" "+lettersZigZag[0].length);
+
+        for (int k = 0; k < lettersZigZag.length; k++) {
+            for (int k2 = 0; k2 < lettersZigZag[0].length; k2++) {
+                System.out.print(lettersZigZag[k][k2]+" "+k);
+            }
+            System.out.println();
+        }  
+
+      //  System.out.println();System.out.println();
+        for (int k = 0; k < lettersZigZag[0].length; k++) {
+           for (int k2 = 0; k2 < lettersZigZag.length; k2++) {
+                if(lettersZigZag[k2][k] != '-'){
+                //    System.out.print(lettersZigZag[k2][k]);
+                    finalStr+=String.valueOf(lettersZigZag[k2][k]);
+                }
+           }
+        }
+
+        return finalStr;
+
+    }
+
     public static void main(String[] args) throws InterruptedException {
 
+
+        
+     //   System.out.println(convert("PAYPALISHIRING",4)+" RERSULTADO");
+     //   System.out.println(convert("PAYPALISHIRING",3)+" RERSULTADO");
+        System.out.println(convert("ABCDE",2)+" RERSULTADO");
+        //System.out.println(findMedianSortedArrays(new int[]{1,2}, new int[]{3,4}));
+/* 
         ListNode c1 = new ListNode();
 
         c1.val = 2;
         c1.next = new ListNode();
         c1.next.val = 4;
         c1.next.next = new ListNode();
-        c1.next.next.val = 3;
+        c1.next.next.val = 3; */
 
      /*    ListNode c2 = c1;
         while (c2 != null) {
@@ -2410,13 +2458,13 @@ public class App {
             c2 = c2.next;
         }
  */
-        ListNode c3 = new ListNode();
+  /*       ListNode c3 = new ListNode();
 
         c3.val = 5;
         c3.next = new ListNode();
         c3.next.val = 6;
         c3.next.next = new ListNode();
-        c3.next.next.val = 4;
+        c3.next.next.val = 4; */
 
        /*  ListNode c4 = c3;
         while (c4 != null) {
@@ -2425,7 +2473,7 @@ public class App {
         }
  */
 
-       ListNode temp = addTwoNumbers(c1, c3);
+/*        ListNode temp = addTwoNumbers(c1, c3);
 
        while (temp !=null) {
         System.out.println(temp.val);
@@ -2437,7 +2485,7 @@ public class App {
 
       BigInteger res1 = r1.add(r2);
 
-       System.out.println(r1+" "+r2+" "+r1.add(r2));
+       System.out.println(r1+" "+r2+" "+r1.add(r2)); */
 
         /** AQUI ESTÁ LÑA APLICACION DE ESTOS METODOS PARA PODERFT AOCIKASOFO O */
 
