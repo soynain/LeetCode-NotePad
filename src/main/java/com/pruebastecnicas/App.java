@@ -2430,17 +2430,138 @@ public class App {
 
     }
 
+    public static int longestPalindromeV2(String[] words) throws InterruptedException {
+        int i = 0;
+        StringBuilder c1 = new StringBuilder();
+        StringBuilder c2 = new StringBuilder();
+
+        Map<String,Integer> concurrencyCounter = new LinkedHashMap<>();
+
+        for (int j = 0; j < words.length; j++) {
+            if(!concurrencyCounter.containsKey(words[j])){
+                concurrencyCounter.put(words[j], 1);
+            }else{
+                concurrencyCounter.put(words[j],concurrencyCounter.get(words[j])+1);
+            }
+        }
+
+
+
+        System.out.println(concurrencyCounter.toString());
+
+        Iterator<Entry<String,Integer>> iter = concurrencyCounter.entrySet().iterator();
+
+        Map<Integer,String> maxLength = new TreeMap<>(Comparator.reverseOrder());
+
+        int impairLast = 0,originalQ = 0;
+        String lastRepCh = "";
+        while(iter.hasNext()){
+            Entry<String,Integer> subsChecker = iter.next();
+            StringBuilder reverseHelper = new StringBuilder();
+            String reverse = reverseHelper.append(subsChecker.getKey()).reverse().toString(); //reversa el char
+
+            if(subsChecker.getValue() >0){ // para que en los ciclos no tome pares de más
+                if(subsChecker.getValue() ==1 && concurrencyCounter.containsKey(reverse) && reverse.equals(subsChecker.getKey())){ // si solo corresponde a uno
+                    c1.insert(c1.length(), reverse);
+                    lastRepCh = reverse;
+                    impairLast = 0;
+                   // originalQ = subsChecker.getValue();
+                    concurrencyCounter.put(reverse, 0);
+                    concurrencyCounter.put(subsChecker.getKey(), 0);
+                    
+                    maxLength.put(c1.length()+c2.length(), c1.toString().concat(c2.toString()).toString());
+                
+                    /*Reinicia tus concatters, porque cuando encuentras un par que solo tiene uno, no puedes añadir más repetidos de par en medio */
+                    c1 = new StringBuilder();
+                    c2= new StringBuilder();
+                    
+                }else if(subsChecker.getValue() ==1 && concurrencyCounter.containsKey(reverse) && !reverse.equals(subsChecker.getKey())){ /**Pares distintos */
+                    c1.insert(0, subsChecker.getKey());
+                    c2.insert(c2.length(), reverse);
+
+                    concurrencyCounter.put(reverse, 0);
+                    concurrencyCounter.put(subsChecker.getKey(), 0);
+
+                    maxLength.put(c1.length()+c2.length(), c1.toString().concat(c2.toString()).toString()); // nota mental del builder, no uses append porque afecta al objeto, siempre convierte el to string 
+                    
+                }else if(subsChecker.getValue() > 1 && concurrencyCounter.containsKey(reverse) && !reverse.equals(subsChecker.getKey())){
+                    /**Puedes tener 3 lc y 10 cl's, en base al menor valor, iras convirtiendo al cero y despues del ciclo, setear en 0 el cl
+                     * puesto que el residuo ya no lo usarás, nisiquiera en medio
+                     */
+                    int minIter = Math.min(concurrencyCounter.get(reverse), subsChecker.getValue()); //3
+
+     
+                    c1.insert(0, subsChecker.getKey().repeat(minIter));
+                    c2.insert(c2.length(), reverse.repeat(minIter));
+
+                    concurrencyCounter.put(reverse, 0);
+                    concurrencyCounter.put(subsChecker.getKey(), 0);
+
+                    maxLength.put(c1.length()+c2.length(), c1.toString().concat(c2.toString()).toString());
+
+                }else if(subsChecker.getValue() > 1 && concurrencyCounter.containsKey(reverse) && reverse.equals(subsChecker.getKey())){
+                    /**En este escenario, hay pares repetidos, teniendo que calcular cuantos al lado y el residuo central, pero también
+                     * sobre eso, no repetir
+                     */
+
+                    int maxPairRepeated = (int)subsChecker.getValue() / 2;
+                    int res = (int)subsChecker.getValue() % 2;
+                    lastRepCh = reverse;
+                    impairLast = res;
+
+                    c1.insert(c1.length(), subsChecker.getKey().repeat(maxPairRepeated));
+                    c2.insert(0, reverse.repeat(maxPairRepeated));
+                    
+                    concurrencyCounter.put(reverse, 0);
+                    concurrencyCounter.put(subsChecker.getKey(), 0);
+
+                    maxLength.put(c1.length()+c2.length(), c1.toString().concat(c2.toString()).toString());
+                }
+
+            }
+            
+            
+        }
+        System.out.println(maxLength.toString()+" generados "+impairLast);
+        
+
+        if(maxLength.size() ==0) return 0;
+        if(impairLast == 0) return maxLength.entrySet().iterator().next().getKey();
+        Entry<Integer,String> pair = maxLength.entrySet().iterator().next();
+        String finalConcat = pair.getValue().substring(0, (pair.getValue().length())/2);
+        return String.valueOf(finalConcat+lastRepCh.repeat(impairLast)+pair.getValue().substring((pair.getValue().length())/2,pair.getValue().length()) ).length();
+    }
+
     public static void main(String[] args) throws InterruptedException {
 
 
-        
+        System.out.println(longestPalindromeV2(new String[]{"lc","cl","gg"}));
+
+        System.out.println(longestPalindromeV2(new String[]{"ab","ty","yt","lc","cl","ab"}));
+
+        System.out.println(longestPalindromeV2(new String[]{"cc","ll","xx"}));
+
+        System.out.println(longestPalindromeV2(new String[]{"lc","cl","gg","gg","gg","gg","gg","lc","lc","cl","cl","cl","cl","cl","cl","cl","cl","cl","cl"})); // PARA PROBAR TERCER CASO DE USO
+
+
+        System.out.println("LOS PRIMEROS WE");
+        System.out.println(longestPalindromeV2(new String[]{"dd","aa","bb","dd","aa","dd","bb","dd","aa","cc","bb","cc","dd","cc"}));
+        System.out.println(longestPalindromeV2(new String[]{"lc","cl","gg","ak","kk"}));
+        System.out.println(longestPalindromeV2(new String[]{"ab","ty","yt","lc","cl","ab","ba"}));
+        System.out.println(longestPalindromeV2(new String[]{"qo","fo","fq","qf","fo","ff","qq","qf","of","of","oo","of","of","qf","qf","of"}));
+        System.out.println(longestPalindromeV2(new String[]{"io","io"}));
+
+        System.out.println(longestPalindromeV2(new String[]{"ga","ac","aa","ag","gc","cg","aa","ac","cg","ga","ga","gg","cg","ca","cg","gg","ca","ag","cc","ag","aa","cg","gg"}));
+        System.out.println(longestPalindromeV2(new String[]{"ll","lb","bb","bx","xx","lx","xx","lx","ll","xb","bx","lb","bb","lb","bl","bb","bx","xl","lb","xx"}));
+        System.out.println(longestPalindromeV2(new String[]{"qw","rr","ll","vv","iw","wq","cc","wi","jj","iw","pp","iw","mm","ss","bb","oo","wi","dd","wq","ff","qi","qw","qi","qi","zz","wq","iw","wi","qq","qw","wi","hh","qi","pp","vv","wi","wq","wi","wi","wi","iw","qi","bb","qw","qi","rr"}));
+/*         
         System.out.println(convert("PAYPALISHIRING",4)+" RERSULTADO");
         System.out.println(convert("PAYPALISHIRING",3)+" RERSULTADO");
         System.out.println(convert("ABCDE",2)+" RERSULTADO");
 
         System.out.println(convert("ABCDEF",2)+" RERSULTADO");
 
-        System.out.println(convert("PAYPALISHIRING",2)+" RERSULTADO");
+        System.out.println(convert("PAYPALISHIRING",2)+" RERSULTADO"); */
         //System.out.println(findMedianSortedArrays(new int[]{1,2}, new int[]{3,4}));
 /* 
         ListNode c1 = new ListNode();
