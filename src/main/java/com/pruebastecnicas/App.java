@@ -2635,9 +2635,197 @@ public class App {
         return toupleCount;
     }
 
+    public static void spiralOrder(int[][] matrix) throws InterruptedException{
+        int top = 0,right = matrix[0].length,bottom = matrix.length-1,left=0;
+
+        int i=0,j=0;
+
+        while(top <= bottom && left<=right){
+            while(j<top){
+                System.out.println(matrix[i][j]);
+                j++;
+            }
+            top++;
+           // j=top;
+            
+            while(i<right){
+                System.out.println(matrix[i][j]);
+                i++;
+            } right--;
+
+          //  i=right;
+
+            while(j>=bottom){
+                System.out.println(matrix[i][j]);
+                j--;
+            }
+
+           // j=bottom;
+
+           // Print bottom row from right to left (if exists)
+            if (top <= bottom) {
+                 while(j>=left){
+                    System.out.println(matrix[i][j]);
+                    if(i==left) break;
+                    j--;
+                }
+                bottom--;
+            }
+
+            if(left<=right ){
+                System.out.println("SII "+left+" "+i);
+                while(i>=left){
+                    System.out.println(matrix[i][j]);
+                    if(i==left) break;
+                    i--;
+                }
+                left++;
+            }
+            
+        }
+    }
+
+
+    public static int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        
+        Stack<HashMap<Integer,Integer>> visiting = new Stack<>();
+
+        Set<HashMap<Integer,Integer>> visited = new HashSet<>();
+
+        int i=0,j=0; int genCounter = 0;
+
+        /**Arriba, izquierda, derecha, abajo */
+      /*   int[] row = {-1,0,0,1};
+        int[] col = {0,-1,1,0}; */
+
+        int[] row = { -1, 0, 0, 1 };
+        int[] col = { 0, -1, 1, 0 };
+
+        if(obstacleGrid[0][0] == 1 || obstacleGrid[obstacleGrid.length-1][obstacleGrid[0].length-1] == 1) return 0; // obstaculo en la entrada lol
+       // if(obstacleGrid.length ==1 && (obstacleGrid[0][0] ==1 || obstacleGrid[obstacleGrid.length-1][obstacleGrid[0].length-1] == 1)) return0;
+
+        if(obstacleGrid.length ==1){
+            Set<Integer> checker = new HashSet<>();
+            checker.addAll(Arrays.stream(obstacleGrid[0]).mapToObj(e->(int)e).collect(Collectors.toSet()));
+
+            return checker.size()==1 ? 1:0;
+        }
+
+        while(i<obstacleGrid.length){
+            while (j<obstacleGrid[0].length) {
+                HashMap<Integer,Integer> coord = new HashMap<>();
+                coord.put(i, j);
+                if(obstacleGrid[i][j] != 1 && !visited.contains(coord)){
+                    visiting.push(new HashMap<>(coord)); //coordenada actual como visitada
+               //     visiting.push(new HashMap<>(coord));
+                    
+                    while (visiting.size()>0) {
+                        HashMap<Integer,Integer> inst = visiting.pop();
+                        Entry<Integer,Integer> opc =  inst.entrySet().iterator().next();
+                        //HashMap<Integer,Integer> 
+                       
+                        
+                        if(opc.getKey() == obstacleGrid.length-1 && opc.getValue() == obstacleGrid[0].length-1){
+                            System.out.println("YEEEEEEEEEEEEEEEEEE");
+                            visiting.clear();
+                            visited.clear();
+                            genCounter++;
+                        }else{
+                            visited.add(inst);
+                            if(obstacleGrid[opc.getKey()][opc.getValue()] !=1){
+                                for (int k = 0; k < col.length; k++) {
+                                    int rowCalc = opc.getKey()+row[k];
+                                    int colCalc = opc.getValue()+col[k];
+
+                                    System.out.println(rowCalc+"-"+colCalc);
+
+                                    if(rowCalc>=0 && rowCalc<obstacleGrid.length && colCalc>=0 && colCalc<obstacleGrid[0].length){
+                                        if(obstacleGrid[rowCalc][colCalc] ==0){
+                                            HashMap<Integer,Integer> crCoord = new HashMap<>();
+                                            crCoord.put(rowCalc, colCalc);
+                                            if(!visited.contains(crCoord)){
+                                                visiting.add(new HashMap<>(crCoord));
+                                            }
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        System.out.println(visiting.toString());
+                    }
+                     visited.add(coord);
+                }
+                j++;
+            }
+
+        
+            i++;
+        }
+
+        System.out.println(genCounter+" asDASDASDSADSA");
+        return genCounter;
+    }
+
+    public static int maxProfit(int[] prices) {
+        TreeMap<Integer,TreeSet<Integer>> bestProf = new TreeMap<>(Comparator.naturalOrder());
+        for (int j2 = 0; j2 < prices.length; j2++) {
+            int mainC = prices[j2];
+            for (int k = j2+1; k < prices.length; k++) {
+             //   System.out.println(prices[k]+" d");
+                if(mainC<prices[k]){
+                //    System.out.println("NEXT "+(Math.abs((mainC - prices[k])  *-1))+" >>"+mainC);
+                    if(!bestProf.containsKey(mainC)){
+                        TreeSet<Integer> aux = new TreeSet<>(Comparator.reverseOrder());
+                        aux.add(Math.max(Math.abs((mainC - prices[k])), Math.abs((mainC - prices[k])) * -1));
+                        bestProf.put(mainC, new TreeSet<>(aux));
+                    }else{
+                        TreeSet<Integer> aux = bestProf.get(mainC);
+                        aux.add(Math.max(Math.abs((mainC - prices[k])), Math.abs((mainC - prices[k])) * -1));
+                        bestProf.put(mainC, new TreeSet<>(aux));
+                    }
+                 //   System.out.println(bestProf.toString());
+                }else{
+                  //  System.out.println("NO");
+                    if(bestProf.containsKey(mainC)){
+                        TreeSet<Integer> aux = bestProf.get(mainC);
+                        aux.add(0);
+                        bestProf.put(mainC, new TreeSet<>(aux));
+                    }else{
+                        TreeSet<Integer> aux = new TreeSet<>(Comparator.reverseOrder());
+                        aux.add(0);
+                        bestProf.put(mainC, new TreeSet<>(aux));
+                    }
+                }
+                
+               
+               // System.out.println();
+            }
+        }
+
+     //   System.out.println(bestProf.toString());
+
+        return bestProf.size()> 0 ? bestProf.entrySet().iterator().next().getValue().iterator().next():0;
+    }
 
     public static void main(String[] args) throws InterruptedException {
- System.out.println(fourSumCount(new int[]{1,2} ,
+
+         System.out.println(maxProfit(new int[]{7,1,5,3,6,4}));
+
+         System.out.println(maxProfit(new int[]{7,6,4,3,1})); 
+         System.out.println(maxProfit(new int[]{2,4,1}));
+/*         System.out.println(uniquePathsWithObstacles(new int[][]{{0,0,0},{0,1,0},{0,0,0}})+" otro bfs we");
+
+        System.out.println(uniquePathsWithObstacles(new int[][]{{0,1},{0,0}})+" otro bfs we");
+
+         System.out.println(uniquePathsWithObstacles(new int[][]{{0,0},{1,0}})+" otro bfs we"); */
+
+       //  System.out.println(uniquePathsWithObstacles(new int[][]{{0,0,0,0},{0,1,0,0},{0,0,0,0},{0,0,1,0},{0,0,0,0}})+" otro bfs we");
+      //  spiralOrder(new int[][]{{1,2},{4,5}});
+    //    spiralOrder(new int[][]{{1,2,3},{4,5,6},{7,8,9}});
+
+     //   spiralOrder(new int[][]{{1,2,3,4},{4,5,6,7},{7,8,9,10}});
+ /* System.out.println(fourSumCount(new int[]{1,2} ,
             new int[]{-2,-1},
             new int[]{-1,2},
             new int[]{0,2}));
@@ -2646,7 +2834,7 @@ public class App {
             new int[]{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}, 
             new int[]{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2},
             new int[]{-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2}));
-
+ */
      /*    System.out.println(fourSumCount(new int[]{59,-2,34,81,-91,4,78,60,96,-25,-19,33,-39,23,-60,4,-65,-9,77,-52,54,5,-64,8,73,-52,49,-6,-54,34,60,99,-4,-54,62,63,-7,-1,-60,43,-46,-61,14,-86,-23,83,-92,40,-32,-27,-70,81,6,52,64,76,89,48,21,19,-61,38,-88,36,75,-83,44,-33,-81,-50,-7,45,79,80,-1,74,40,-80,-61,46,39,-50,-27,-56,35,97,31,23,90,-30,-84,-61,-61,22,40,-69,-38,0,-65,-92,36,0,-7,-32,-36,21,-39,-74,93,9,-33,22,-81,-36,49,81,43,-84,71,40,78,50,-1,-48,-98,99,-70,36,3,-13,77,17,-32,4,39,-7,-25,-90,-7,15,72,52,26,100,-83,7,0,13,-41,-2,-34,-87,40,-75,2,36,44,74,-68,-96,-63,16,-89,29,12,-24,-74,-50,-70,8,34,5,61,-11,58,65,29,-19,-61,-14,-51,-92,35,-59,-75,-38,51,-66,41,-93,-88,-93,-85,-2},
             new int[]{98,54,-33,30,92,13,100,-34,34,24,-12,86,87,-78,31,22,23,-39,-18,41,87,-4,42,41,-43,16,-13,-39,26,99,15,72,28,93,95,12,48,-5,74,-78,57,-39,-29,-42,54,-23,35,43,-17,-58,-32,-67,15,-51,62,-79,49,1,-18,-45,71,61,-96,-78,46,-10,-76,69,-98,-93,-69,26,22,19,65,96,-87,-44,-67,-47,88,-51,-79,-81,22,97,62,7,-83,-57,-53,51,38,27,27,73,-9,1,-33,56,87,-3,28,-47,-83,-88,-56,-46,78,-7,-69,-18,-74,-20,-43,-21,13,9,81,-88,-27,-16,89,-30,3,41,-76,-45,64,-26,-26,-58,-86,-34,56,-97,75,21,-55,-63,-60,-10,-61,55,-3,-20,-99,-83,-54,-2,-57,-16,12,-92,-42,-70,97,-78,20,69,10,24,-90,-52,-65,98,15,-73,-25,-48,-98,0,86,59,40,67,-41,-72,95,-11,50,-41,77,16,54,3,49,-35,-90,12,17,80,100,-31},
             new int[]{59,87,-37,15,-33,-53,22,7,6,-12,65,90,-10,-65,40,-7,20,-76,5,-76,32,67,-82,-26,15,-34,-55,65,-79,98,-99,85,-32,22,43,13,-25,32,43,30,8,23,-21,82,98,-61,2,77,-24,12,60,39,-51,1,-95,-38,49,-1,-37,92,-30,90,24,-75,45,-11,-66,-11,-62,52,64,-17,-100,-81,-41,-28,80,-19,-78,-85,-99,55,33,72,7,-23,64,7,-26,2,-46,42,-54,15,-84,41,27,-87,-6,-82,35,100,-57,-99,-72,65,31,-53,13,-31,-46,65,-17,-88,34,68,-44,-48,-100,21,-82,70,-28,13,-47,87,15,-31,-72,-59,-69,-94,87,-30,84,-63,-11,-32,76,-59,29,-82,-100,54,49,-18,29,31,-65,70,-51,-56,7,59,-69,-35,82,40,79,-62,-96,29,-54,-69,-48,58,-4,73,-73,31,42,-1,-56,-7,-24,-63,83,-48,84,12,22,-20,16,94,-46,-44,-63,40,14,-35,-16,14,100,-28},
