@@ -2808,12 +2808,133 @@ public class App {
         return bestProf.size()> 0 ? bestProf.entrySet().iterator().next().getValue().iterator().next():0;
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static boolean isValid(String s) {
+        
+        HashMap<Character,Character> dictionary = new HashMap<>();
+        dictionary.put(')', '(');
+        dictionary.put('}', '{');
+        dictionary.put(']', '[');
 
-         System.out.println(maxProfit(new int[]{7,1,5,3,6,4}));
+        int i =0;
+        HashMap<Character,Integer> leftFrequencyMap = new HashMap<>();
+        Stack<Character> concat = new Stack<>();
+
+        while(i<s.length()){
+            Character charToValidate = s.charAt(i);
+
+            /*Si es de apertura, añadelo primero al mapa de frequencia */
+            if(charToValidate.equals('(') || charToValidate.equals('{') || charToValidate.equals('[')){
+                
+                concat.push(charToValidate);
+            }else if(charToValidate.equals(')') || charToValidate.equals('}') || charToValidate.equals(']')){
+                if(concat.size()>0 && concat.peek().equals(dictionary.get(charToValidate))){
+                    concat.pop();
+                }else{
+                    concat.push(charToValidate);
+                }
+            }
+            
+
+            i++;
+        }
+
+      //  System.out.println(concat.toString());
+
+        return concat.size()>0 ? false : true;
+    }
+
+    /**Tuve que oirientarme del geeks for geeks */
+    public static int search(int[] nums, int target) {
+        int start = 0,end = nums.length-1,middle = -1;
+    
+
+        while(start<=end){
+            int mid = start + (end-start) / 2; //wsi tienes un index entre start = 6 y end = 9, resta 9-6, y de eso, dividelo entre 2 = 3/2 = 1 + 6 = 7, la mitad
+
+            if(nums[mid] == target){
+                middle = mid;
+                break;
+                //return middle;
+            }
+
+            if(nums[mid] < target){
+                start = mid+1; // avanzas una pos
+            }else{
+                end = end-1; // disminuyes una en rango
+            }
+
+            
+
+        }
+
+        return middle;
+    }
+
+
+    //Si c <=b   [a,b][c,d]
+    public static int[][] merge(int[][] intervals) {
+        Stack<HashMap<Integer,Integer>> intervalsPos = new Stack<>();
+
+        /**[[1,3],[2,6],[8,10],[15,18]] */
+        for (int j2 = 0; j2 < intervals.length; j2++) {
+
+            HashMap<Integer,Integer> adder = new HashMap<>();
+
+            if(intervalsPos.size()>0){
+                Entry<Integer,Integer> comparer = intervalsPos.peek().entrySet().iterator().next(); // obten el previo [a,b]
+
+                 //Si c <=b   [a,b][c,d]
+                if(comparer.getValue() >= intervals[j2][0]){ //[c,d]
+                //    System.out.println("VERDAD");
+                    intervalsPos.pop(); // quita el antepenultimo elemento y añade el overlapeado
+                    adder.put(Math.min(comparer.getKey(),intervals[j2][0]), Math.max(intervals[j2][1],comparer.getValue() ));
+                }else{
+                    adder.put(intervals[j2][0], intervals[j2][1]);
+                }
+
+            }else{
+                adder.put(intervals[j2][0], intervals[j2][1]);
+            }
+
+            intervalsPos.add(new HashMap<>(adder));
+            
+        }
+
+        //List<int[]> preArr = new ArrayList<>();
+        int[][] finalMat = new int[intervalsPos.size()][2];
+        int im = 0;
+        for (HashMap<Integer,Integer> hashMap : intervalsPos) {
+            Entry<Integer,Integer> elem = hashMap.entrySet().iterator().next();
+            finalMat[im][0] = elem.getKey();
+            finalMat[im][1] = elem.getValue();
+            im++;
+        }
+
+        
+      /*   System.out.println(intervalsPos.toString());
+
+        for (int k = 0; k < finalMat.length; k++) {
+            for (int k2 = 0; k2 < finalMat[0].length; k2++) {
+                System.out.print(finalMat[k][k2]);
+            }
+            System.out.println();
+        } */
+        return finalMat;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println(merge(new int[][]{{1,3},{2,6},{8,10},{15,18}}));
+
+        System.out.println(merge(new int[][]{{1,4},{4,5}}));
+
+        System.out.println(merge(new int[][]{{4,7},{1,4}}));
+
+     //   System.out.println(search(new int[]{-1,0,3,5,9,12}, 2));
+   //     System.out.println(isValid("(]")+" RESPUESTA");
+/*          System.out.println(maxProfit(new int[]{7,1,5,3,6,4}));
 
          System.out.println(maxProfit(new int[]{7,6,4,3,1})); 
-         System.out.println(maxProfit(new int[]{2,4,1}));
+         System.out.println(maxProfit(new int[]{2,4,1})); */
 /*         System.out.println(uniquePathsWithObstacles(new int[][]{{0,0,0},{0,1,0},{0,0,0}})+" otro bfs we");
 
         System.out.println(uniquePathsWithObstacles(new int[][]{{0,1},{0,0}})+" otro bfs we");
