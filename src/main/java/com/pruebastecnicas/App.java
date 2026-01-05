@@ -2922,12 +2922,93 @@ public class App {
         return finalMat;
     }
 
+
+    public static int[][] updateMatrix(int[][] mat) {
+        //    int i=0,j=0;
+        Queue<HashMap<Integer,Integer>> visiting = new LinkedList<>();
+        Set<HashMap<Integer,Integer>> visited = new HashSet<>();
+
+        int[][] results = new int[mat.length][mat[0].length];
+
+        /**Arriba,izquierda, derecha y abajo */
+        int[] row = {-1,0,0,1};
+        int[] col = {0,-1,1,0};
+
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[0].length; j++) {
+                if(mat[i][j] == 1){ // if equals 1, then proceed to go
+                    HashMap<Integer,Integer> currentCoord = new HashMap<>();
+                    currentCoord.put(i, j);
+                    System.out.println(i+" "+j);
+                    /**Añade la coordenada a la pila de visitados */
+                    visiting.add(new HashMap<>(currentCoord));
+                    visited.add(new HashMap<>(currentCoord));
+                    int oneCounter = 0;
+                    while(visiting.size()>0){
+                        HashMap<Integer,Integer> coordInstance =visiting.poll();
+                        Entry<Integer,Integer> currCord = coordInstance.entrySet().iterator().next();
+                        if(mat[currCord.getKey()][currCord.getValue()] !=0){
+                            oneCounter++;
+                        }
+
+                        System.out.println(oneCounter+" counter por fase "+currCord.toString());
+                        for (int k = 0; k < col.length; k++) {
+                            int rowCol = row[k] + currCord.getKey();
+                            int colCol = col[k] + currCord.getValue();
+                            
+                            /**Calculando cada coordenada, iterativamente vas explorando todos los nodos */
+                            if(rowCol>=0 && rowCol< mat.length && colCol>=0 && colCol< mat[0].length){
+                                /**es una coordenada valida */
+                                HashMap<Integer,Integer> coordToAdd = new HashMap<>();
+                                coordToAdd.put(rowCol, colCol);
+                                /**Si ya se llega al 0 en alguno de los vecinos */
+                                if (!visited.contains(coordToAdd)) {
+                                    if(mat[rowCol][colCol] == 0){
+                                        results[i][j] = oneCounter;
+                                        visiting.clear();
+                                        visited.clear();
+                                        break;
+                                    }else{
+                                        
+                                        visiting.add(new HashMap<>(coordToAdd));
+                                        visited.add(new HashMap<>(coordInstance));
+                                    
+                                        /**Continuas con el dfs hasta encontrar el cero más cercano */
+                                    }
+                                }
+                            }
+
+                        }
+
+                        System.out.println(visiting.toString());
+                    }
+                    
+                }
+            }
+        }
+
+        for (int i = 0; i < results.length; i++) {
+            for (int j = 0; j < results.length; j++) {
+                System.out.print(results[i][j]);
+            }
+
+            System.out.println();
+        }
+        return results;
+    }
+
+
+
     public static void main(String[] args) throws InterruptedException {
-        System.out.println(merge(new int[][]{{1,3},{2,6},{8,10},{15,18}}));
+        System.out.println(updateMatrix(new int[][]{{0,0,0},{0,1,0},{1,1,1}}));
+
+        System.out.println(updateMatrix(new int[][]{{1,0,1,1,0,0,1,0,0,1},{0,1,1,0,1,0,1,0,1,1},{0,0,1,0,1,0,0,1,0,0},{1,0,1,0,1,1,1,1,1,1},{0,1,0,1,1,0,0,0,0,1},{0,0,1,0,1,1,1,0,1,0},{0,1,0,1,0,1,0,0,1,1},{1,0,0,0,1,1,1,1,0,1},{1,1,1,1,1,1,1,0,1,0},{1,1,1,1,0,1,0,0,1,1}}));
+
+       /*  System.out.println(merge(new int[][]{{1,3},{2,6},{8,10},{15,18}}));
 
         System.out.println(merge(new int[][]{{1,4},{4,5}}));
 
-        System.out.println(merge(new int[][]{{4,7},{1,4}}));
+        System.out.println(merge(new int[][]{{4,7},{1,4}})); */
 
      //   System.out.println(search(new int[]{-1,0,3,5,9,12}, 2));
    //     System.out.println(isValid("(]")+" RESPUESTA");
