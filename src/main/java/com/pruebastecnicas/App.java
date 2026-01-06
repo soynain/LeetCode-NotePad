@@ -2998,12 +2998,96 @@ public class App {
     }
 
 
+    /**Este problema si me dio flojera alv */
+    public static void setZeroes(int[][] matrix) {
+        int[] row = {-1,0,0,1};
+        int[] col = {0,-1,1,0};
 
+       // Set<Integer> rows = new HashSet<>();Set<Integer> cols = new HashSet<>();
+       Set<HashMap<Integer,Integer>> zeros = new HashSet<>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                
+                if (matrix[i][j] == 0) {
+                    HashMap<Integer,Integer> c1 = new HashMap<>();
+                    c1.put(i, j);
+
+                    zeros.add(new HashMap<>(c1));
+                }
+            }
+
+        }
+
+
+        for (HashMap<Integer,Integer> hashMap : zeros) {
+            Entry<Integer,Integer> opc = hashMap.entrySet().iterator().next();
+
+            Arrays.fill(matrix[opc.getKey()], 0);
+
+            int piv = 0;
+
+            /**Arriba hacia abajo */
+            while(piv>=0 && piv<matrix.length){
+                matrix[piv][opc.getValue()] = 0;
+                piv++;
+            }
+
+            /**Abajo hacia arriba */
+         //   System.out.println(opc.toString());
+        }
+
+  /*       for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                System.out.print(matrix[i][j]);
+            }
+
+            System.out.println();
+        } */
+
+    }
+
+  /*   public static String intToRoman(int num) {
+        HashMap<Integer,Character> table = new HashMap<>();
+        table.put(1000,'M');
+        table.put(500, 'D');
+        table.put(100, 'C');
+        table.put(50, 'L');
+        table.put(10, 'X');
+        table.put(5, 'V');
+        table.put(1,'I');
+
+        String printer = "";
+
+        int finalNum = num;
+
+        while(finalNum > 0){
+            Iterator<Entry<Integer,Character>> opc = table.entrySet().iterator();
+
+            while (opc.hasNext() && ) {
+                
+            }
+        }
+
+
+
+
+        return "";
+    } */
+
+
+    
     public static void main(String[] args) throws InterruptedException {
-        System.out.println(updateMatrix(new int[][]{{0,0,0},{0,1,0},{1,1,1}}));
+
+      //  System.out.println(intToRoman(1994)+" respuesta");
+        
+/* 
+        setZeroes(new int[][]{{0,1,2,0},{3,4,5,2},{1,3,1,5}});
+
+        setZeroes(new int[][]{{1,1,1},{1,0,1},{1,1,1}}); */
+       /*  System.out.println(updateMatrix(new int[][]{{0,0,0},{0,1,0},{1,1,1}}));
 
         System.out.println(updateMatrix(new int[][]{{1,0,1,1,0,0,1,0,0,1},{0,1,1,0,1,0,1,0,1,1},{0,0,1,0,1,0,0,1,0,0},{1,0,1,0,1,1,1,1,1,1},{0,1,0,1,1,0,0,0,0,1},{0,0,1,0,1,1,1,0,1,0},{0,1,0,1,0,1,0,0,1,1},{1,0,0,0,1,1,1,1,0,1},{1,1,1,1,1,1,1,0,1,0},{1,1,1,1,0,1,0,0,1,1}}));
-
+ */
        /*  System.out.println(merge(new int[][]{{1,3},{2,6},{8,10},{15,18}}));
 
         System.out.println(merge(new int[][]{{1,4},{4,5}}));
